@@ -14,10 +14,12 @@
             theme: {
                 extend: {
                     colors: {
+                        // VERDE MAIS VIVO (Vibrant Emerald)
                         'wicked-green': '#00A86B', 
+                        // ROSA MAIS VIVO (Vibrant Glinda Pink)
                         'glinda-pink': '#FF99CC', 
-                        'hot-pink': '#FF69B4', 
-                        'oz-yellow': '#FFD700',
+                        'hot-pink': '#FF69B4', // Hot Pink (para respostas corretas)
+                        'oz-yellow': '#FFD700', // Ouro de Oz
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -44,46 +46,56 @@
         #game-content {
             width: 100%;
             flex-grow: 1;
+            /* min-height: 85vh; */ /* Removido para permitir que o setup cresça */
             padding: 1rem;
             display: flex;
             flex-direction: column;
             align-items: center; 
-            transition: all 0.5s ease-in-out;
+            transition: all 0.5s ease-in-out; /* Transição para suavizar mudanças de layout */
         }
 
         /* --- ANIMAÇÕES DE TRANSIÇÃO --- */
+        /* Efeito de saída (zoom out e some) */
         @keyframes fade-out-zoom {
             0% { opacity: 1; transform: scale(1); }
             100% { opacity: 0; transform: scale(0.9); }
         }
+        /* Efeito de entrada (começa pequeno e aparece) */
         @keyframes fade-in-scale {
             0% { opacity: 0; transform: scale(0.98); }
             100% { opacity: 1; transform: scale(1); }
         }
+        /* Efeito de entrada suave (para o fundo da história) */
         @keyframes story-background-fade-in {
             from { opacity: 0; }
             to { opacity: 1; }
         }
         
-        .animate-fade-out { animation: fade-out-zoom 0.5s forwards; }
-        .animate-fade-in { animation: fade-in-scale 0.5s forwards; }
-        .story-enter { animation: story-background-fade-in 1s ease-out forwards; }
+        .animate-fade-out {
+            animation: fade-out-zoom 0.5s forwards;
+        }
+
+        .animate-fade-in {
+            animation: fade-in-scale 0.5s forwards;
+        }
+
+        .story-enter {
+            animation: story-background-fade-in 1s ease-out forwards;
+        }
+
 
         /* --- ESTILOS TEMÁTICOS (VN E BOTÕES) --- */
         .btn-theme {
             transition: all 0.2s ease-in-out;
             @apply font-bold py-3 px-6 rounded-xl shadow-lg transform hover:scale-105;
         }
-        /* Adiciona estado de desabilitado */
-        .btn-theme:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none; /* Remove o hover:scale */
+        .btn-primary {
+            /* Usa o novo wicked-green */
+            @apply btn-theme bg-wicked-green text-white hover:bg-green-700;
         }
-
-        .btn-primary { @apply btn-theme bg-wicked-green text-white hover:bg-green-700; }
-        .btn-incorrect { @apply btn-theme bg-gray-400 text-white hover:bg-gray-500; }
-        
+        .btn-incorrect {
+            @apply btn-theme bg-gray-400 text-white hover:bg-gray-500;
+        }
         .glinda-portrait {
             font-size: 5rem;
             line-height: 1;
@@ -91,37 +103,47 @@
         .vn-dialog-box {
             background-color: rgba(0, 0, 0, 0.85);
             color: white;
+            /* Usa o novo glinda-pink mais vivo */
             border-top: 5px solid #FF99CC; 
             min-height: 150px;
             padding: 1.5rem;
             border-radius: 0.5rem;
         }
         .emerald-bg {
-            /* [Imagem de Fundo da Cidade Esmeralda] */
-            background-image: url('https://placehold.co/1920x1080/00A86B/FFFFFF?text=Cidade+Esmeralda'); 
+            /* Fundo da Cidade Esmeralda (VN) */
+            /* Imagem de fallback caso a URL quebre */
+            background-image: url('https://placehold.co/1920x1080/00A86B/FFFFFF?text=Cidade+Esmeralda');
             background-image: url('https://i.imgur.com/xnrTEQh.jpeg'); 
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
+            /* Usa o novo wicked-green */
             background-color: #00A86B; 
         }
 
         /* --- ESTILOS PARA AS ALTERNATIVAS --- */
         .option-button {
             transition: all 0.3s ease;
+            /* AUMENTADO: text-xl para text-2xl */
             @apply w-full py-5 px-4 text-2xl text-left border-2 border-oz-yellow bg-white text-gray-800 rounded-xl shadow-md hover:bg-oz-yellow/30 font-medium;
         }
-        .option-button.correct { @apply bg-hot-pink border-pink-700 text-white shadow-xl scale-105; }
-        .option-button.incorrect { @apply bg-red-400 border-red-600 text-white shadow-lg opacity-50; }
+        /* Usa hot-pink para destacar o clique correto */
+        .option-button.correct {
+            @apply bg-hot-pink border-pink-700 text-white shadow-xl scale-105;
+        }
+        .option-button.incorrect {
+            @apply bg-red-400 border-red-600 text-white shadow-lg opacity-50;
+        }
         
-        /* --- ESTILOS DO CARD FLIP --- */
+        /* --- ESTILOS DO CARD FLIP (CORREÇÃO DE ROTAÇÃO) --- */
         .perspective-1000 {
             perspective: 1000px; 
             height: 100%;
             min-height: 500px; 
         }
+
         .flip-card {
-            width: 100%;
+            width: 100%; /* Corrigido de 1-0% */
             height: 100%;
             position: relative;
             transition: transform 1s; 
@@ -129,58 +151,63 @@
             transform: rotateY(0deg); 
             min-height: inherit; 
         }
-        .flip-card.is-flipped { transform: rotateY(180deg); }
+
+        .flip-card.is-flipped {
+            transform: rotateY(180deg); 
+        }
+
         .flip-card-face {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden; 
+            /* MUDANÇA para fundo branco puro e borda amarela forte (mais vibrante) */
             @apply bg-white p-8 rounded-3xl shadow-2xl border-8 border-oz-yellow; 
         }
-        .flip-card-front { transform: rotateY(0deg); }
+
+        .flip-card-front {
+            /* REMOVIDO: transform: rotate(1deg); */
+            transform: rotateY(0deg); 
+        }
+
         .flip-card-back {
             transform: rotateY(180deg);
             display: flex;
             align-items: center;
             justify-content: center;
+            /* Fundo quase branco para o verso */
             @apply bg-white/95 shadow-inner; 
         }
-        
-        /* --- INDICADOR DE LOADING DE ÁUDIO --- */
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .audio-loader {
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top-color: #FF99CC; /* glinda-pink */
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        /* Loader para o botão amarelo */
-        .audio-loader.yellow {
-             border-top-color: #4b5563; /* gray-600 */
-             width: 16px;
-             height: 16px;
-             border-width: 2px;
-        }
-
+        /* FIM DOS ESTILOS DO CARD FLIP */
     </style>
 </head>
-<body>
+<body class="bg-blue-50">
 
+    <!-- Título Principal -->
     <h1 id="main-title" class="text-4xl md:text-5xl font-extrabold text-center text-wicked-green mt-6 mb-6 border-b-4 border-glinda-pink pb-2 w-full max-w-4xl">
         Quiz de Oz: A Jornada Começa
     </h1>
 
+    <!-- 
+      Elemento de Áudio Persistente 
+      Fica aqui (escondido) para a música não reiniciar 
+      quando o botão for recarregado.
+    -->
+    <audio id="game-audio" loop>
+        <!-- ATENÇÃO: Este link de áudio é de um conversor online e pode expirar! -->
+        <source src="https://s31.aconvert.com/convert/p3r68-cdx67/1w9kc-y8izo.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <!-- Conteúdo Dinâmico do Jogo -->
     <div id="game-content">
-        <!-- O conteúdo é renderizado aqui via JavaScript -->
+        <!-- O conteúdo será renderizado aqui pelo JavaScript -->
     </div>
 
-    <div id="message-box" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center p-4">
+    <!-- Caixa de Mensagem (Alerta Customizado) -->
+    <div id="message-box" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center">
         <div id="message-text" class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center text-xl font-semibold border-4 border-oz-yellow">
+            <!-- O texto e o botão da mensagem são injetados via JS -->
             <button onclick="hideMessage()" class="btn-primary mt-4">Entendi</button>
         </div>
     </div>
@@ -195,13 +222,12 @@
         currentQuestionIndex: 0,
         teamOrder: [], 
         teamOrderIndex: 0, 
-        questionsUsedIds: new Set(),
-        currentStoryIndex: 0,
+        questionsUsedIds: new Set(), // Usaremos IDs para rastrear perguntas
         
         quizQuestions: [
-             { id: 1, q: "Qual o nome da universidade mágica onde Elphaba e Glinda se encontram pela primeira vez?", options: [
+            { id: 1, q: "Qual o nome da bruxa boa", options: [
                 { text: "Academia de Munchkinland", isCorrect: false },
-                { text: "Universidade Shiz", isCorrect: true },
+                { text: "Glinda", isCorrect: true },
                 { text: "Instituto de Quadlings", isCorrect: false },
                 { text: "Colégio do Leste", isCorrect: false }
             ]},
@@ -211,29 +237,29 @@
                 { text: "Um par de luvas brancas", isCorrect: false },
                 { text: "Um chapéu com penas cor-de-rosa", isCorrect: false }
             ]},
-             { id: 3, q: "Qual Animal é o professor de História em Shiz, que teme perder a voz?", options: [
-                { text: "Um Leão (que mais tarde se torna covarde)", isCorrect: false },
-                { text: "Um Macaco (que mais tarde ganha asas)", isCorrect: false },
-                { text: "Um Bode (Dr. Dillamond)", isCorrect: true },
-                { text: "Um Mágico (que na verdade é um humano)", isCorrect: false }
+            { id: 3, q: "Qual o nome do Bode (Animal) que é professor em Shiz e corre o risco de perder a voz?", options: [
+                { text: "Boq", isCorrect: false },
+                { text: "Fiyero", isCorrect: false },
+                { text: "Doutor Dillamond", isCorrect: true },
+                { text: "O Feiticeiro", isCorrect: false }
             ]},
-            { id: 4, q: "Qual o título que Elphaba recebe quando é chamada para a Cidade Esmeralda?", options: [
-                { text: "A Maga Prodígio", isCorrect: false },
-                { text: "A Bruxa Má do Oeste", isCorrect: true },
-                { text: "A Feiticeira da Luz", isCorrect: false },
-                { text: "A Defensora dos Animais", isCorrect: false }
+            { id: 4, q: "Qual música Elphaba canta quando decide desafiar o Feiticeiro e voa pela primeira vez?", options: [
+                { text: "Popular", isCorrect: false },
+                { text: "The Wizard and I", isCorrect: false },
+                { text: "No Good Deed", isCorrect: false },
+                { text: "Defying Gravity (Desafiar a Gravidade)", isCorrect: true }
             ]},
-            { id: 5, q: "O que o Feiticeiro de Oz quer que Elphaba use para 'ajudar' os animais (criando os macacos alados)?", options: [
+            { id: 5, q: "O que o Feiticeiro de Oz quer que Elphaba use para 'ajudar' os animais?", options: [
                 { text: "Um cajado encantado", isCorrect: false },
-                { text: "O Grimmerie (Livro de Feitiços)", isCorrect: true },
-                { text: "Um livro de feitiços de Madame Morrible", isCorrect: false },
+                { text: "O Grimmerie (Livro de Feitiços)", isCorrect: true }, // Ela usa o livro para criar os macacos voadores
+                { text: "Um livro de Madame Morrible", isCorrect: false },
                 { text: "Um anel de controle mental", isCorrect: false }
             ]},
-            { id: 6, q: "Qual a cor dos sapatos que a irmã de Elphaba, Nessa Rose, recebe de seu pai?", options: [
-                { text: "Vermelhos (Rubi)", isCorrect: false },
-                { text: "Verdes (Esmeralda)", isCorrect: false },
-                { text: "Prateados (com joias)", isCorrect: true },
-                { text: "Azuis (Azul Leste)", isCorrect: false }
+            { id: 6, q: "Qual a cor final dos sapatos que Elphaba encanta para sua irmã, Nessa Rose?", options: [
+                { text: "Vermelho Rubi", isCorrect: true },
+                { text: "Verde Esmeralda", isCorrect: false },
+                { text: "Prateado Brilhante", isCorrect: false },
+                { text: "Azul Céu", isCorrect: false }
             ]},
             { id: 7, q: "Quem canta a música 'Popular'?", options: [
                 { text: "Elphaba", isCorrect: false },
@@ -241,23 +267,23 @@
                 { text: "Glinda", isCorrect: true },
                 { text: "Fiyero", isCorrect: false }
             ]},
-            { id: 8, q: "Qual o apelido que Elphaba e Glinda dão ao seu professor de História?", options: [
-                { text: "O Sabichão", isCorrect: false },
-                { text: "Professor Cabaça", isCorrect: false },
-                { text: "Dr. Dillamond (Professor Bode)", isCorrect: true },
-                { text: "Doutor Chifres", isCorrect: false }
+            { id: 8, q: "O que Glinda e Elphaba tentam fazer juntas no baile 'Ozdust'?", options: [
+                { text: "Cantar um dueto", isCorrect: false },
+                { text: "Dançar juntas (sem jeito)", isCorrect: true }, // O famoso 'dançar'
+                { text: "Fazer um feitiço de levitação", isCorrect: false },
+                { text: "Coroar Fiyero o rei do baile", isCorrect: false }
             ]},
-            { id: 9, q: "O que Glinda dá a Elphaba para fazê-la 'popular' no baile (Ozdust Ballroom)?", options: [
+            { id: 9, q: "O que Glinda dá a Elphaba para fazê-la 'popular' no início (que Elphaba acaba usando)?", options: [
                 { text: "Um vestido rosa", isCorrect: false },
-                { text: "Um chapéu preto pontudo (que ela diz ser 'fashion')", isCorrect: true },
+                { text: "Um chapéu preto pontudo", isCorrect: true }, // Ela dá de 'brincadeira', mas Elphaba usa
                 { text: "Um feitiço de beleza", isCorrect: false },
                 { text: "Um livro de etiqueta de Oz", isCorrect: false }
             ]},
-            { id: 10, q: "Qual criatura alada Glinda e Elphaba tentam libertar na Cidade Esmeralda (que era um filhote de leão)?", options: [
-                { text: "Gárgulas Falantes", isCorrect: false },
-                { text: "Um filhote de Leão em uma jaula", isCorrect: true },
+            { id: 10, q: "Qual criatura alada Glinda e Elphaba tentam libertar na Cidade Esmeralda?", options: [
+                { text: "Um Leão filhote (covarde)", isCorrect: true }, // Elas libertam o filhote de leão na aula, não macacos na cidade.
+                { text: "Morcegos Gigantes", isCorrect: false },
                 { text: "Corujas Sábias", isCorrect: false },
-                { text: "Macacos Alados", isCorrect: false }
+                { text: "Macacos Alados", isCorrect: false } // Elphaba cria os macacos, não os liberta
             ]},
             { id: 11, q: "Qual o nome completo de Glinda (antes dela se tornar 'boa')?", options: [
                 { text: "Gillian Upland", isCorrect: false },
@@ -265,13 +291,20 @@
                 { text: "Gloriana Pink", isCorrect: false },
                 { text: "Gloryanne Highcliff", isCorrect: false }
             ]},
-            { id: 12, q: "Em que lugar no palco Elphaba canta 'Defying Gravity', decidindo seu destino?", options: [
-                { text: "No Castelo de Kiamo Ko", isCorrect: false },
-                { text: "Na Universidade Shiz", isCorrect: false },
-                { text: "Na Cidade Esmeralda, no topo da torre", isCorrect: true },
-                { text: "Na mansão da Madame Morrible", isCorrect: false }
+            { id: 12, q: "Qual personagem se torna o Espantalho?", options: [
+                { text: "Boq", isCorrect: false },
+                { text: "Dr. Dillamond", isCorrect: false },
+                { text: "Fiyero", isCorrect: true },
+                { text: "O Feiticeiro", isCorrect: false }
+            ]},
+            { id: 13, q: "Qual personagem se torna o Homem de Lata?", options: [
+                { text: "Boq", isCorrect: true },
+                { text: "Fiyero", isCorrect: false },
+                { text: "Um guarda de Oz", isCorrect: false },
+                { text: "Dr. Dillamond", isCorrect: false }
             ]}
         ],
+        // --- TEXTO DA HISTÓRIA ATUALIZADO ---
         storyText: [
             "Saudações viajantes, me chamo glinda \"A boa\" e estou aqui para te guiar",
             "Se quer entrar na grande Cidade Esmeralda, siga o caminho de tijolos amarelos",
@@ -280,225 +313,15 @@
             "Ao visitar as nossas atrações tome cuidado com a Bruxa Má e seu grimorio magico, seu principal alvo são visitantes perdidos",
             "E para ie embora volte até o caminho de tijolos amarelos e bata seus calcanhares 3 vezes, boa viagem!"
         ]
+        // --- FIM DA ATUALIZAÇÃO ---
     };
 
     let CURRENT_QUESTION_DATA = null; 
     let storyKeyListener = null; 
 
-    // --- CONTROLES DE ÁUDIO ---
-    let globalAudioPlayer = new Audio(); 
-    let isAudioLoading = false;
-    let isAudioUnlocked = false; // Variável para rastrear se o áudio foi destravado
-    let currentAudioController = null; // AbortController para cancelar fetches
+    // --- UTILS ---
 
-    /** Para o áudio atual que estiver tocando */
-    function stopCurrentAudio() {
-        if (globalAudioPlayer) {
-            globalAudioPlayer.pause();
-            globalAudioPlayer.src = ""; // Limpa a fonte, pronto para a próxima
-        }
-        if (currentAudioController) {
-            currentAudioController.abort(); // Cancela qualquer fetch de áudio em andamento
-        }
-        // Não reseta isAudioLoading aqui, é controlado pelo fetch
-    }
-
-    // --- UTILS DE CONVERSÃO DE ÁUDIO (PCM para WAV) ---
-
-    /** Converte Base64 para ArrayBuffer */
-    function base64ToArrayBuffer(base64) {
-        const binaryString = window.atob(base64);
-        const len = binaryString.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
-        return bytes.buffer;
-    }
-
-    /** Converte dados PCM para um Blob WAV */
-    function pcmToWav(pcmData, sampleRate) {
-        const numSamples = pcmData.length;
-        const numChannels = 1;
-        const bitsPerSample = 16;
-        const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
-        const blockAlign = numChannels * (bitsPerSample / 8);
-        
-        const buffer = new ArrayBuffer(44 + numSamples * 2);
-        const view = new DataView(buffer);
-
-        // RIFF header
-        writeString(view, 0, 'RIFF');
-        view.setUint32(4, 36 + numSamples * 2, true);
-        writeString(view, 8, 'WAVE');
-        // fmt chunk
-        writeString(view, 12, 'fmt ');
-        view.setUint32(16, 16, true); // chunk size
-        view.setUint16(20, 1, true); // audio format (1 = PCM)
-        view.setUint16(22, numChannels, true);
-        view.setUint32(24, sampleRate, true);
-        view.setUint32(28, byteRate, true);
-        view.setUint16(32, blockAlign, true);
-        view.setUint16(34, bitsPerSample, true);
-        // data chunk
-        writeString(view, 36, 'data');
-        view.setUint32(40, numSamples * 2, true);
-
-        // Write PCM data
-        let offset = 44;
-        for (let i = 0; i < numSamples; i++, offset += 2) {
-            view.setInt16(offset, pcmData[i], true);
-        }
-
-        return new Blob([view], { type: 'audio/wav' });
-    }
-
-    /** Helper para escrever strings no DataView */
-    function writeString(view, offset, string) {
-        for (let i = 0; i < string.length; i++) {
-            view.setUint8(offset + i, string.charCodeAt(i));
-        }
-    }
-
-    /** Função para resetar a UI do botão */
-    function resetAudioUI() {
-        isAudioLoading = false;
-        const playBtn = document.getElementById('manual-play-btn');
-        const playBtnText = document.getElementById('play-btn-text');
-        const loadingIndicator = document.getElementById('audio-loading');
-
-        if (playBtn) playBtn.disabled = false;
-        if (playBtnText) playBtnText.innerText = "Ouvir Narração";
-        if (loadingIndicator) loadingIndicator.classList.add('hidden');
-    }
-
-    /** Toca o áudio PCM recebido da API */
-    async function playAudioFromPCM(base64Data, mimeType) {
-        try {
-            const sampleRateMatch = mimeType.match(/rate=(\d+)/);
-            const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000; // Default 24kHz
-
-            const pcmBuffer = base64ToArrayBuffer(base64Data);
-            const pcm16 = new Int16Array(pcmBuffer);
-            const wavBlob = pcmToWav(pcm16, sampleRate);
-            const audioUrl = URL.createObjectURL(wavBlob);
-
-            // Adiciona listeners para resetar a UI quando o áudio terminar
-            globalAudioPlayer.onended = resetAudioUI;
-            globalAudioPlayer.onerror = () => {
-                console.error("Erro ao tocar o áudio.");
-                resetAudioUI();
-            };
-
-            globalAudioPlayer.src = audioUrl; 
-            await globalAudioPlayer.play();
-
-        } catch (error) {
-            console.error("Erro ao processar áudio PCM:", error);
-            resetAudioUI(); // Reseta se a conversão falhar
-        }
-    }
-
-    // --- FUNÇÃO DE GERAÇÃO DE ÁUDIO (TTS) ---
-
-    /** Função chamada pelo botão "Ouvir Narração" */
-    function handleManualPlay() {
-        if (isAudioLoading) return; // Previne cliques duplos
-        
-        const text = GAME_STATE.storyText[GAME_STATE.currentStoryIndex];
-        fetchAndPlayAudio(text); 
-    }
-
-    /** Busca e toca o áudio para um texto específico */
-    async function fetchAndPlayAudio(text) {
-        if (isAudioLoading) return;
-        stopCurrentAudio(); // Para o áudio anterior antes de buscar um novo
-        
-        isAudioLoading = true;
-        currentAudioController = new AbortController(); 
-        const signal = currentAudioController.signal;
-
-        // --- ATUALIZA A UI DO BOTÃO DE PLAY ---
-        const playBtn = document.getElementById('manual-play-btn');
-        const playBtnText = document.getElementById('play-btn-text');
-        const loadingIndicator = document.getElementById('audio-loading');
-        
-        if (playBtn) playBtn.disabled = true;
-        if (playBtnText) playBtnText.innerText = "Carregando...";
-        if (loadingIndicator) loadingIndicator.classList.remove('hidden');
-        // --- FIM DA ATUALIZAÇÃO ---
-
-
-        // Voz 'Laomedeia' (Otimista)
-        const voiceName = "Laomedeia";
-        // Prompt de estilo para a voz
-        const promptText = `Leia com uma voz otimista e amigável, como Glinda: ${text}`;
-        
-        const apiKey = ""; // Deixe vazio, será gerenciado pelo ambiente
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-
-        const payload = {
-            contents: [{
-                parts: [{ text: promptText }]
-            }],
-            generationConfig: {
-                responseModalities: ["AUDIO"],
-                speechConfig: {
-                    voiceConfig: {
-                        prebuiltVoiceConfig: { voiceName: voiceName }
-                    }
-                }
-            },
-            model: "gemini-2.5-flash-preview-tts"
-        };
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                signal: signal 
-            });
-
-            if (signal.aborted) {
-                console.log("Busca de áudio cancelada.");
-                resetAudioUI(); // Reseta se for abortado
-                return;
-            }
-
-            if (!response.ok) {
-                // Se o erro for 400, pode ser uma API Key inválida
-                if(response.status === 400) {
-                     console.error("Erro 400: Verifique se a API Key é válida ou se a API está habilitada.");
-                } else {
-                    console.error(`Erro na API TTS: ${response.statusText}`);
-                }
-                throw new Error(`Erro na API TTS: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            const part = result?.candidates?.[0]?.content?.parts?.[0];
-            const audioData = part?.inlineData?.data;
-            const mimeType = part?.inlineData?.mimeType;
-
-            if (audioData && mimeType && mimeType.startsWith("audio/")) {
-                await playAudioFromPCM(audioData, mimeType); // Esta função agora lida com o reset no 'onended'
-            } else {
-                console.error("Resposta da API TTS inesperada:", result);
-                resetAudioUI(); // Reseta se não houver dados de áudio
-            }
-
-        } catch (error) {
-            if (error.name !== 'AbortError') {
-                console.error("Erro ao gerar áudio:", error);
-            }
-            resetAudioUI(); // Reseta em caso de erro
-        }
-    }
-
-
-    // --- UTILS DO JOGO ---
-
+    /** Embaralha um array no local */
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -506,6 +329,7 @@
         }
     }
 
+    /** Exibe a caixa de mensagem customizada */
     function showMessage(text) {
         document.getElementById('message-text').innerHTML = `
             <p>${text}</p>
@@ -515,13 +339,25 @@
         document.getElementById('message-box').classList.add('flex');
     }
 
+    /** Oculta a caixa de mensagem customizada */
     function hideMessage() {
         document.getElementById('message-box').classList.remove('flex');
         document.getElementById('message-box').classList.add('hidden');
+        
+        // Se estivermos no quiz, tenta avançar
+        if (GAME_STATE.phase === 'quiz') {
+            if (GAME_STATE.questionsUsedIds.size < GAME_STATE.quizQuestions.length) {
+                renderQuizPhase();
+            } else {
+                renderResultsPhase();
+            }
+        }
     }
     
+    /** Ajusta o layout da tela (ex: esconde o título na VN) */
     function updateScreenLayout() {
         const titleElement = document.getElementById('main-title');
+
         if (GAME_STATE.phase === 'story') {
             titleElement.classList.add('hidden');
         } else {
@@ -529,7 +365,32 @@
         }
     }
 
+    // --- LÓGICA DO PLAYER DE ÁUDIO (NOVO) ---
+    /** Alterna (play/pause) o áudio do jogo */
+    function toggleAudio() {
+        const audio = document.getElementById('game-audio');
+        const btn = document.getElementById('play-pause-btn'); // O botão que está na tela da história
+        
+        if (!audio || !btn) return;
+
+        if (audio.paused) {
+            audio.play().catch(e => {
+                console.error("Erro ao tocar áudio:", e);
+                // Tratamento de erro de Autoplay:
+                // O navegador exige interação do usuário antes de tocar áudio.
+                showMessage("O navegador bloqueou o áudio. Por favor, clique em 'Entendi' e tente tocar a música novamente.");
+            });
+            btn.innerHTML = '⏸️ Pausar Música';
+        } else {
+            audio.pause();
+            btn.innerHTML = '▶️ Tocar Música';
+        }
+    }
+
+
     // --- FUNÇÕES DE EVENTO DE TECLADO ---
+    
+    /** Configura o listener para a tecla 'Enter' durante a história */
     function setupStoryKeyListener() {
         removeStoryKeyListener();
         storyKeyListener = function(event) {
@@ -546,6 +407,7 @@
         document.addEventListener('keydown', storyKeyListener);
     }
 
+    /** Remove o listener da tecla 'Enter' */
     function removeStoryKeyListener() {
         if (storyKeyListener) {
             document.removeEventListener('keydown', storyKeyListener);
@@ -556,19 +418,29 @@
 
     // --- FUNÇÕES DE RENDERIZAÇÃO DE FASE ---
 
+    /** Renderiza a tela inicial de configuração dos times */
     function renderSetupPhase() {
         removeStoryKeyListener(); 
+        
+        // --- NOVO: Para a música ao reiniciar ---
+        const audio = document.getElementById('game-audio');
+        if (audio && !audio.paused) {
+            audio.pause();
+        }
+        // --- FIM DA ADIÇÃO ---
         
         GAME_STATE.phase = 'setup';
         updateScreenLayout();
         const content = document.getElementById('game-content');
         
+        // Remove todas as classes de animação e layout de VN
         content.classList.remove('emerald-bg', 'fixed', 'inset-0', 'p-0', 'm-0', 'h-screen', 'w-screen', 'top-0', 'left-0', 'story-enter', 'animate-fade-in', 'animate-fade-out');
-        content.style.height = 'auto';
-        content.style.minHeight = 'auto';
+
         document.body.style.overflow = 'auto'; 
+        content.style.minHeight = 'auto';
 
         content.innerHTML = `
+            <!-- CONTAINER PRINCIPAL: AGORA OCUPA W-FULL ATÉ O MAX-W-7XL E AUMENTA O PADDING -->
             <div class="w-full max-w-7xl mx-auto bg-glinda-pink/10 p-8 md:p-16 rounded-3xl shadow-2xl border-4 border-wicked-green transform transition duration-300">
                 
                 <h2 class="text-4xl lg:text-5xl font-extrabold mb-4 text-center text-wicked-green flex items-center justify-center">
@@ -581,6 +453,7 @@
                     Reúnam seus 6 grupos! Quem levará a glória da Cidade Esmeralda? Insira os nomes de suas equipes abaixo.
                 </p>
                 
+                <!-- CONTAINER DO FORMULÁRIO: EXPANDIDO PARA MAX-W-6XL COM MAIS ESPAÇAMENTO (gap-8) -->
                 <form id="team-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     ${Array(6).fill().map((_, i) => `
                         <div class="relative">
@@ -589,16 +462,17 @@
                             </label>
                             <input type="text" id="team-${i}" 
                                 class="team-input mt-1 block w-full p-4 md:p-5 border-2 border-wicked-green rounded-xl shadow-lg 
-                                        focus:ring-4 focus:ring-glinda-pink focus:border-glinda-pink transition duration-150 text-xl
-                                        placeholder-gray-400" 
+                                       focus:ring-4 focus:ring-glinda-pink focus:border-glinda-pink transition duration-150 text-xl
+                                       placeholder-gray-400" 
                                 placeholder="Nome do seu time" required maxlength="25">
                         </div>
                     `).join('')}
+                    <!-- BOTÃO OCUPA AS 3 COLUNAS -->
                     <div class="md:col-span-2 lg:col-span-3 text-center mt-10">
                         <button type="submit" 
-                                class="w-full md:w-3/4 lg:w-2/3 font-extrabold py-5 px-8 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 
-                                    bg-gradient-to-r from-glinda-pink to-hot-pink text-white border-4 border-oz-yellow hover:from-hot-pink hover:to-glinda-pink group 
-                                    focus:outline-none focus:ring-4 focus:ring-wicked-green/50">
+                            class="w-full md:w-3/4 lg:w-2/3 font-extrabold py-5 px-8 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 
+                                   bg-gradient-to-r from-glinda-pink to-hot-pink text-white border-4 border-oz-yellow hover:from-hot-pink hover:to-glinda-pink group 
+                                   focus:outline-none focus:ring-4 focus:ring-wicked-green/50">
                             <span class="flex items-center justify-center text-2xl lg:text-3xl">
                                 Começar a História de Glinda
                                 <span class="ml-3 text-3xl group-hover:rotate-12 transition-transform duration-300">✨</span>
@@ -612,30 +486,9 @@
         document.getElementById('team-form').addEventListener('submit', handleTeamSetup);
     }
 
+    /** Processa o formulário de times e inicia a história */
     function handleTeamSetup(event) {
         event.preventDefault();
-
-        // --- DESTRAVA O ÁUDIO NA PRIMEIRA INTERAÇÃO ---
-        if (!isAudioUnlocked) {
-            // Carga de um WAV silencioso de 0.5s em Base64 para "destravar" o player
-            globalAudioPlayer.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-            globalAudioPlayer.play().then(() => {
-                globalAudioPlayer.pause();
-                globalAudioPlayer.currentTime = 0; // Reinicia para o início
-                console.log("Contexto de áudio destravado com áudio silencioso.");
-                isAudioUnlocked = true;
-            }).catch(e => {
-                console.warn("Tentativa de destravar áudio falhou (tentando plano B):", e.message);
-                // Tenta destravar sem fonte (plano B para alguns navegadores)
-                globalAudioPlayer.src = ""; // Limpa a fonte
-                globalAudioPlayer.play().catch(e2 => {});
-                globalAudioPlayer.pause();
-                isAudioUnlocked = true; // Assume que destravou mesmo com erro
-            });
-        }
-        // --- FIM DA CORREÇÃO ---
-
-
         const inputs = document.querySelectorAll('.team-input');
         const teamNames = [];
 
@@ -660,17 +513,26 @@
         shuffleArray(GAME_STATE.teamOrder); 
         GAME_STATE.teamOrderIndex = 0; 
         
+        
+        // --- TRANSIÇÃO 1: SETUP -> STORY ---
         const content = document.getElementById('game-content');
+        
+        // 1. Aplica a animação de fade-out no conteúdo atual
         content.classList.add('animate-fade-out');
 
+        // 2. Espera a animação terminar (500ms) antes de renderizar a próxima fase
         setTimeout(() => {
             GAME_STATE.currentStoryIndex = 0;
             setupStoryKeyListener(); 
+            
+            // Remove o fade-out antes de renderizar o novo conteúdo
             content.classList.remove('animate-fade-out'); 
+            
             renderStoryPhase(); 
         }, 500); 
     }
 
+    /** Renderiza a fase da história (Visual Novel) */
     function renderStoryPhase() {
         GAME_STATE.phase = 'story';
         updateScreenLayout();
@@ -679,96 +541,107 @@
         const currentText = GAME_STATE.storyText[storyIndex];
         const isLast = storyIndex === GAME_STATE.storyText.length - 1;
 
+        // Adiciona classes para o Visual Novel (fundo, altura total, e animação de entrada)
         content.classList.add('emerald-bg', 'fixed', 'inset-0', 'p-0', 'm-0', 'story-enter');
-        content.style.height = '100vh';
         content.style.minHeight = '100vh';
         document.body.style.overflow = 'hidden';
 
+        // Verifica o estado atual do áudio para exibir o texto correto no botão
+        const audio = document.getElementById('game-audio');
+        const audioButtonText = (audio && !audio.paused) ? '⏸️ Pausar Música' : '▶️ Tocar Música';
+
         content.innerHTML = `
-            <div class="w-full h-full flex flex-col justify-end p-4 md:p-8">
+            <div class="w-full h-full flex flex-col justify-end p-4 md:p-8 relative"> <!-- Adicionado 'relative' -->
                 
+                <!-- BOTÃO DE ÁUDIO (NOVO) -->
+                <div class="absolute top-4 right-4 z-30">
+                    <button id="play-pause-btn" onclick="toggleAudio()" class="btn-primary py-2 px-5 text-lg opacity-80 hover:opacity-100">
+                        ${audioButtonText} <!-- Texto dinâmico -->
+                    </button>
+                </div>
+
+                <!-- Retrato de Glinda (Emoji) -->
                 <div class="flex justify-start ml-2 mb-[-20px] z-10">
-                    <div class="glinda-portrait text-glinda-pink flex-shrink-0" style="text-shadow: 0 4px 15px rgba(255, 105, 180, 0.7);">
+                    <div class="glinda-portrait text-glinda-pink flex-shrink-0 text-shadow-lg">
                         ✨
                     </div>
                 </div>
 
+                <!-- Caixa de Diálogo -->
                 <div class="vn-dialog-box w-full max-w-full z-20">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-xl font-bold text-glinda-pink">Glinda, a Bruxa Boa:</h3>
-                    </div>
-                    
+                    <h3 class="text-xl font-bold text-glinda-pink mb-2">Glinda:</h3> <!-- Texto "A Boa" removido para caber o novo texto -->
                     <p class="text-lg leading-relaxed italic mb-4">
                         "${currentText}"
                     </p>
-                    
-                    <!-- ÁREA DE BOTÕES ATUALIZADA -->
-                    <div class="flex justify-between items-center mt-4">
-                        <!-- Botão de Play Manual -->
-                        <button id="manual-play-btn" onclick="handleManualPlay()" class="btn-theme bg-oz-yellow text-gray-900 hover:bg-yellow-300 py-2 px-4 text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span id="play-btn-text" class="mr-2">Ouvir Narração</span>
-                            <!-- Ícone de Play (SVG) -->
-                            <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                                <path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25v-4.5a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" />
-                            </svg>
-                            <!-- Loader -->
-                            <div id="audio-loading" class="audio-loader yellow ml-2 hidden"></div>
-                        </button>
 
-                        <!-- Botão de Continuar -->
-                        <div class="text-right">
-                            <button onclick="${isLast ? 'startQuiz()' : 'nextStory()'}" class="btn-theme bg-glinda-pink text-white hover:bg-pink-500 py-2 px-4 text-sm">
-                                ${isLast ? 'Iniciar o Quiz! >>' : 'Continuar >>'}
-                            </button>
-                            <p class="text-xs text-gray-400 mt-2">Clique ou pressione ENTER para continuar</p>
-                        </div>
+                    <div class="text-right">
+                        <button onclick="${isLast ? 'startQuiz()' : 'nextStory()'} " class="btn-theme bg-glinda-pink text-white hover:bg-pink-500 py-2 px-4 text-sm">
+                            ${isLast ? 'Iniciar o Quiz de Oz! >>' : 'Continuar >>'}
+                            
+                        </button>
+                        <p class="text-xs text-gray-400 mt-2">Clique ou pressione ENTER para continuar</p>
                     </div>
-                    <!-- FIM DA ÁREA DE BOTÕES -->
                 </div>
             </div>
         `;
     }
 
+    /** Avança para o próximo slide da história */
     function nextStory() {
-        stopCurrentAudio(); // Para o áudio ao avançar
-        resetAudioUI(); // Garante que o botão seja resetado
         if (GAME_STATE.currentStoryIndex < GAME_STATE.storyText.length - 1) {
             GAME_STATE.currentStoryIndex++;
-            renderStoryPhase(); 
+            renderStoryPhase();
         }
     }
 
+    /** Inicia a fase do Quiz após a história */
     function startQuiz() {
+        // Remove o listener do Enter ao sair da fase da história
         removeStoryKeyListener(); 
-        stopCurrentAudio(); // Para o áudio da história
-        resetAudioUI();
         
+        // --- NOVO: Para a música ao sair da história ---
+        const audio = document.getElementById('game-audio');
+        if (audio && !audio.paused) {
+            audio.pause();
+        }
+        // --- FIM DA ADIÇÃO ---
+        
+        // --- TRANSIÇÃO 2: STORY -> QUIZ ---
         const content = document.getElementById('game-content');
+        
+        // 1. Aplica a animação de fade-out no conteúdo VN
         content.classList.add('animate-fade-out');
         
+        // 2. Espera a animação terminar (500ms) antes de renderizar a fase do Quiz
         setTimeout(() => {
             GAME_STATE.phase = 'quiz';
             GAME_STATE.teamOrderIndex = 0; 
             GAME_STATE.currentQuestionIndex = 0;
             GAME_STATE.questionsUsedIds.clear();
             
+            // 3. Remove classes do VN (fundo, fixo, fade-out) e restaura o fluxo normal
             content.classList.remove('emerald-bg', 'fixed', 'inset-0', 'p-0', 'm-0', 'story-enter', 'animate-fade-out');
-            content.style.height = 'auto';
-            content.style.minHeight = 'auto';
             document.body.style.overflow = 'auto';
+            content.style.minHeight = 'auto';
             
+            // 4. Adiciona um fade-in para introduzir o conteúdo do quiz
             content.classList.add('animate-fade-in'); 
+            
+            // 5. Renderiza a próxima fase
             renderQuizPhase();
+            
+            // 6. Remove o fade-in após o uso
             setTimeout(() => { content.classList.remove('animate-fade-in'); }, 500);
             
         }, 500); 
     }
 
+    /** Renderiza o Placar lateral (ou superior em mobile) */
     function renderScoreboard() {
         const sortedTeams = Object.entries(GAME_STATE.scores).sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
 
         return `
-            <div class="w-full md:w-64 md:sticky md:top-4 bg-white p-4 rounded-xl shadow-2xl border-2 border-wicked-green flex-shrink-0 md:h-min">
+            <div class="w-full md:w-64 md:sticky md:top-0 bg-white p-4 rounded-xl shadow-2xl border-2 border-wicked-green flex-shrink-0">
                 <h3 class="text-xl font-bold text-center mb-3 text-glinda-pink border-b pb-2">Placar Atual</h3>
                 <ul class="space-y-2">
                     ${sortedTeams.map(([team, score]) => `
@@ -782,6 +655,7 @@
         `;
     }
 
+    /** Continua para a próxima rodada após o clique no botão 'Próxima Rodada' */
     function continueQuizRound() {
         const quizCard = document.getElementById('quiz-card');
         if (quizCard) {
@@ -789,42 +663,38 @@
         }
 
         if (GAME_STATE.questionsUsedIds.size < GAME_STATE.quizQuestions.length) {
+            // Renderiza a próxima pergunta com um pequeno delay para a animação do flip reverso
             setTimeout(() => {
                 const content = document.getElementById('game-content');
                 content.classList.add('animate-fade-in'); 
                 renderQuizPhase();
                 setTimeout(() => { content.classList.remove('animate-fade-in'); }, 500);
-            }, 800);
+            }, 500); 
         } else {
+            // Se acabaram as perguntas, vai para os resultados
             setTimeout(() => {
-                 const content = document.getElementById('game-content');
-                 content.classList.add('animate-fade-out');
-                 setTimeout(() => {
-                    content.classList.remove('animate-fade-out');
-                    content.classList.add('animate-fade-in');
-                    renderResultsPhase();
-                    setTimeout(() => content.classList.remove('animate-fade-in'), 500);
-                 }, 500);
-            }, 800);
+                renderResultsPhase();
+            }, 500);
         }
     }
-    
+
+    /** Pega a próxima pergunta aleatória que ainda não foi usada */
     function getNextRandomQuestion() {
-        if (GAME_STATE.questionsUsedIds.size >= GAME_STATE.quizQuestions.length) {
-            return null;
+        const availableQuestions = GAME_STATE.quizQuestions.filter(
+            q => !GAME_STATE.questionsUsedIds.has(q.id)
+        );
+
+        if (availableQuestions.length === 0) {
+            return null; // Acabaram as perguntas
         }
-        
-        let availableQuestions = GAME_STATE.quizQuestions.filter(q => !GAME_STATE.questionsUsedIds.has(q.id));
-        
-        if (availableQuestions.length === 0) return null;
 
         const randomIndex = Math.floor(Math.random() * availableQuestions.length);
         const question = availableQuestions[randomIndex];
         
-        GAME_STATE.questionsUsedIds.add(question.id);
         return question;
     }
 
+    /** Renderiza a tela principal do Quiz (pergunta e placar) */
     function renderQuizPhase() {
         GAME_STATE.phase = 'quiz';
         updateScreenLayout();
@@ -840,21 +710,25 @@
         
         CURRENT_QUESTION_DATA = questionData; 
         const question = questionData.q;
-        const options = [...questionData.options];
+        const options = [...questionData.options]; // Clona o array para embaralhar
         const content = document.getElementById('game-content');
-        const currentRound = GAME_STATE.questionsUsedIds.size;
+        const currentRound = GAME_STATE.questionsUsedIds.size + 1; 
 
+        // Embaralha as opções desta pergunta
         shuffleArray(options);
 
         content.innerHTML = `
             <div class="max-w-7xl mx-auto p-4 w-full"> 
                 <div class="flex flex-col md:flex-row gap-10"> 
                     
+                    <!-- Placar -->
                     ${renderScoreboard()}
 
+                    <!-- Cartão do Quiz (Flip Card) -->
                     <div class="flex-grow w-full perspective-1000"> 
                         <div id="quiz-card" class="flip-card">
 
+                            <!-- Frente do Cartão (Pergunta) -->
                             <div id="card-front" class="flip-card-face flip-card-front">
                                 
                                 <div class="card-header bg-gradient-to-r from-wicked-green to-green-700 text-center text-white py-4 rounded-t-3xl mb-6 -mt-8 mx-[-2rem] border-b-8 border-hot-pink shadow-2xl flex items-center justify-center">
@@ -865,12 +739,14 @@
 
                                 <h3 class="text-xl font-bold mb-4 text-glinda-pink">Rodada ${currentRound} de ${GAME_STATE.quizQuestions.length}</h3>
                                 
+                                
                                 <div class="text-center p-4 bg-oz-yellow rounded-xl mb-6 border-4 border-wicked-green shadow-xl">
                                     <p class="text-xl font-semibold text-gray-900">
                                         Momento do Time: 
                                         <span class="font-extrabold text-gray-900 text-3xl">${teamName}</span>
                                     </p>
                                 </div>
+
                                 
                                 <p class="text-3xl font-semibold text-gray-900 leading-relaxed mb-8">
                                     <span class="font-black text-wicked-green mr-2 text-4xl">Q:</span> ${question}
@@ -885,13 +761,16 @@
                                         </button>
                                     `).join('')}
                                 </div>
+
                                 
                                 <p class="text-center text-sm text-gray-500 mt-6 italic">
                                     (Mediador: Clique na alternativa escolhida pelo time para registrar a pontuação.)
                                 </p>
                             </div>
 
+                            <!-- Verso do Cartão (Resultado) -->
                             <div id="card-back" class="flip-card-face flip-card-back">
+                                <!-- O conteúdo do verso é injetado pelo handleOptionClick -->
                             </div>
                         </div>
                     </div>
@@ -900,19 +779,35 @@
         `;
     }
 
+    /** Processa o clique em uma opção do quiz */
     function handleOptionClick(isCorrect, clickedButton, selectedOptionText) {
         const optionsArea = document.getElementById('options-area');
         const allButtons = optionsArea.querySelectorAll('button');
         
         const teamName = GAME_STATE.teamOrder[GAME_STATE.teamOrderIndex];
 
+        // Desativa todos os botões
         allButtons.forEach(btn => btn.onclick = null);
 
+        // Encontra o texto da resposta correta
         const correctAnswer = CURRENT_QUESTION_DATA.options.find(opt => opt.isCorrect);
         const correctAnswerText = correctAnswer.text;
 
+        // Atualiza a pontuação
+        if (isCorrect) {
+            GAME_STATE.scores[teamName]++;
+        }
+        
+        // Marca a pergunta como usada
+        GAME_STATE.questionsUsedIds.add(CURRENT_QUESTION_DATA.id);
+
+        // Avança para o próximo time
+        GAME_STATE.teamOrderIndex = (GAME_STATE.teamOrderIndex + 1) % GAME_STATE.teams.length;
+
+        // Destaca visualmente as respostas
         allButtons.forEach(btn => {
-            const buttonText = btn.innerText.substring(btn.innerText.indexOf(':') + 2);
+            // Pega o texto da opção, ignorando a letra (ex: "A: ")
+            const buttonText = btn.innerText.substring(btn.innerText.indexOf(':') + 2); 
             
             if (btn === clickedButton) {
                 if (isCorrect) {
@@ -921,28 +816,24 @@
                     btn.classList.add('incorrect');
                 }
             } else if (buttonText === correctAnswerText) {
+                // Destaca a correta se não foi a clicada
                 btn.classList.add('bg-hot-pink/30', 'border-hot-pink');
             } else {
+                // Apaga as outras incorretas
                 btn.classList.add('opacity-40');
             }
         });
 
-        if (isCorrect) {
-            GAME_STATE.scores[teamName] += 1;
-        }
-
-        GAME_STATE.teamOrderIndex = (GAME_STATE.teamOrderIndex + 1) % GAME_STATE.teamOrder.length;
-
-        const cardBack = document.getElementById('card-back');
-        cardBack.innerHTML = `
+        // Define o conteúdo do verso do cartão
+        const backContent = `
             <div class="h-full w-full flex flex-col justify-center items-center p-8 text-center bg-white/95 rounded-2xl">
                 <h3 class="text-4xl font-extrabold mb-6 text-glinda-pink">Resultado Mágico</h3>
                 
                 ${isCorrect ? 
                     `<p class="text-5xl mb-4 text-hot-pink">✨ CORRETO! ✨</p>
-                     <p class="text-2xl text-gray-800">Ponto para o time <strong>${teamName}</strong>! Parabéns, essa foi uma resposta fabulosa!</p>` :
+                     <p class="text-2xl text-gray-800">Ponto para o time ${teamName}! Parabéns, essa foi uma resposta fabulosa!</p>` :
                     `<p class="text-5xl mb-4 text-red-600">❌ INCORRETO ❌</p>
-                     <p class="text-2xl text-gray-800">O time <strong>${teamName}</strong> errou! A Bruxa Má não ficaria feliz.</p>`
+                     <p class="text-2xl text-gray-800">O time ${teamName} errou! A Bruxa Má não ficaria feliz.</p>`
                 }
 
                 <div class="mt-8 p-6 rounded-xl w-full max-w-sm border-4 ${isCorrect ? 'border-hot-pink bg-hot-pink/10' : 'border-red-600 bg-red-100'}">
@@ -950,111 +841,70 @@
                     <p class="text-2xl font-extrabold text-hot-pink">${correctAnswerText}</p>
                 </div>
 
-                <button onclick="continueQuizRound()" class="btn-theme bg-wicked-green text-white hover:bg-green-700 mt-10 py-4 px-8 text-2xl">
-                    Próxima Rodada >>
+                <button onclick="continueQuizRound()" class="btn-primary mt-10 text-xl py-4 px-8">
+                    ${GAME_STATE.questionsUsedIds.size < GAME_STATE.quizQuestions.length ? 'Próxima Rodada!' : 'Ver Resultados Finais!'}
                 </button>
             </div>
         `;
-
+        
+        // Insere o conteúdo no verso e vira o cartão
+        document.getElementById('card-back').innerHTML = backContent;
         setTimeout(() => {
             document.getElementById('quiz-card').classList.add('is-flipped');
-        }, 500);
+        }, 300); // Pequeno delay para o usuário ver o clique
     }
 
+    /** Renderiza a tela final de resultados */
     function renderResultsPhase() {
         GAME_STATE.phase = 'results';
         updateScreenLayout();
-        removeStoryKeyListener();
-        stopCurrentAudio(); // Garante que nenhum áudio da história esteja tocando
-
+        
         const content = document.getElementById('game-content');
         
+        // Remove layout classes do quiz
         content.classList.remove('animate-fade-in', 'animate-fade-out');
-        content.style.height = 'auto';
+        document.body.style.overflow = 'auto';
         content.style.minHeight = 'auto';
 
         const sortedTeams = Object.entries(GAME_STATE.scores).sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
         const winner = sortedTeams[0];
-        const winners = sortedTeams.filter(team => team[1] === winner[1]);
 
         content.innerHTML = `
-            <div class="w-full max-w-5xl mx-auto bg-white p-8 md:p-16 rounded-3xl shadow-2xl border-8 border-oz-yellow transform transition duration-300 animate-fade-in">
+            <div class="w-full max-w-4xl mx-auto bg-glinda-pink/10 p-8 md:p-16 rounded-3xl shadow-2xl border-4 border-wicked-green text-center animate-fade-in">
                 
-                <h2 class="text-5xl lg:text-6xl font-extrabold mb-6 text-center text-wicked-green flex items-center justify-center">
-                    <span class="text-6xl lg:text-7xl mr-3 text-oz-yellow">🏆</span>
+                <h2 class="text-5xl lg:text-6xl font-extrabold mb-6 text-wicked-green">
+                    <span class="text-6xl lg:text-7xl text-oz-yellow">🏆</span>
                     Resultados Finais!
-                    <span class="text-6xl lg:text-7xl ml-3 text-oz-yellow">🏆</span>
+                    <span class="text-6xl lg:text-7xl text-oz-yellow">🏆</span>
                 </h2>
-
-                <div class="text-center bg-gradient-to-r from-glinda-pink to-hot-pink text-white p-8 rounded-2xl shadow-xl mb-10 border-4 border-white">
-                    ${winners.length > 1 ?
-                        `<h3 class="text-3xl font-bold mb-2">Temos um Empate Fabuloso!</h3>
-                         <p class="text-4xl font-extrabold">${winners.map(w => w[0]).join(' e ')}</p>
-                         <p class="text-3xl mt-2">Com ${winner[1]} pontos cada!</p>` :
-                        `<h3 class="text-3xl font-bold mb-2">O Grande Vencedor de Oz é...</h3>
-                         <p class="text-5xl font-extrabold">${winner[0]}</p>
-                         <p class="text-3xl mt-2">Com ${winner[1]} pontos!</p>`
-                    }
+                
+                <div class="bg-white p-8 rounded-2xl shadow-inner border-4 border-glinda-pink">
+                    <p class="text-3xl font-bold text-gray-800">O Time Vencedor é...</p>
+                    <p class="text-7xl font-black text-hot-pink my-4">${winner[0]}</p>
+                    <p class="text-4xl font-bold text-gray-800">Com <span class="text-5xl text-wicked-green">${winner[1]}</span> pontos!</p>
                 </div>
 
-                <h4 classZ="text-3xl font-bold text-center text-glinda-pink mb-6">Placar Final</h4>
+                <h3 class="text-3xl font-bold text-wicked-green mt-12 mb-6">Placar Completo</h3>
                 
-                <ul class="space-y-3 max-w-2xl mx-auto">
+                <ul class="space-y-3 max-w-lg mx-auto">
                     ${sortedTeams.map(([team, score], index) => `
-                        <li class="flex justify-between items-center text-2xl p-4 rounded-xl shadow-md ${index < winners.length ? 'bg-oz-yellow/30 border-2 border-oz-yellow' : 'bg-gray-100'}">
-                            <span class="font-bold ${index < winners.length ? 'text-wicked-green' : 'text-gray-800'}">
-                                ${index + 1}. ${team}
-                            </span>
-                            <span class="text-3xl font-mono ${index < winners.length ? 'text-wicked-green' : 'text-gray-600'}">${score}</span>
+                        <li class="flex justify-between items-center text-2xl p-4 rounded-lg ${index === 0 ? 'bg-oz-yellow/30 border-2 border-oz-yellow' : 'bg-white/50'}">
+                            <span class="font-bold ${index === 0 ? 'text-hot-pink' : 'text-gray-700'}">${index + 1}. ${team}</span>
+                            <span class="text-3xl font-mono text-wicked-green">${score}</span>
                         </li>
                     `).join('')}
                 </ul>
 
-                <div class="text-center mt-12">
-                    <button onclick="restartGame()" 
-                            class="w-full md:w-2/3 font-extrabold py-5 px-8 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 
-                                    bg-gradient-to-r from-wicked-green to-green-700 text-white border-4 border-oz-yellow hover:from-green-700 hover:to-wicked-green group 
-                                    focus:outline-none focus:ring-4 focus:ring-glinda-pink/50">
-                        <span class="flex items-center justify-center text-2xl lg:text-3xl">
-                            Jogar Novamente
-                            <span class="ml-3 text-3xl group-hover:rotate-180 transition-transform duration-300">🔄</span>
-                        </span>
-                    </button>
-                </div>
+                <button onclick="renderSetupPhase()" class="btn-primary mt-12 text-2xl py-4 px-10">
+                    Jogar Novamente!
+                </button>
             </div>
         `;
     }
 
-    function restartGame() {
-        stopCurrentAudio(); // Para qualquer áudio
-        const content = document.getElementById('game-content');
-        
-        content.classList.add('animate-fade-out');
-
-        setTimeout(() => {
-            GAME_STATE.teams = [];
-            GAME_STATE.scores = {};
-            GAME_STATE.phase = 'setup';
-            GAME_STATE.teamOrder = [];
-            GAME_STATE.teamOrderIndex = 0;
-            GAME_STATE.questionsUsedIds.clear();
-            GAME_STATE.currentStoryIndex = 0;
-            isAudioUnlocked = false; // Reseta o destravamento
-            
-            content.classList.remove('animate-fade-out');
-            content.classList.add('animate-fade-in');
-            
-            renderSetupPhase();
-            
-            setTimeout(() => content.classList.remove('animate-fade-in'), 500);
-        }, 500);
-    }
-
-
-    // --- INICIALIZAÇÃO DO JOGO ---
-    window.onload = () => {
-        renderSetupPhase();
-    };
+    // --- PONTO DE ENTRADA ---
+    /** Inicia o jogo quando a página carrega */
+    window.onload = renderSetupPhase;
 
 </script>
 </body>
