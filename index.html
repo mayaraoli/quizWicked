@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wicked Quiz: A História de Glinda</title>
-    <!-- Carregamento do Tailwind CSS -->
+    
+    <!-- Carrega o Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configuração do Tailwind para cor e fonte -->
+    
+    <!-- Configuração de Cores e Fontes do Tailwind -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'wicked-green': '#228B22',
-                        'glinda-pink': '#FFC0CB',
+                        'wicked-green': '#00A86B', 
+                        'glinda-pink': '#FF99CC', 
+                        'hot-pink': '#FF69B4', 
                         'oz-yellow': '#FFD700',
                     },
                     fontFamily: {
@@ -24,87 +27,160 @@
         }
     </script>
     <style>
-        /* Estilização para o fundo e a fonte - AGORA TUDO NA TELA CHEIA */
+        /* --- ESTILOS GERAIS DE TELA (FULL SCREEN) --- */
         body {
-            background-color: #f0f9ff; /* Azul claro do céu de Oz */
+            background-color: #f0f9ff;
             min-height: 100vh;
             width: 100vw;
             margin: 0;
+            padding: 0; 
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             align-items: center;
-            padding: 0; /* Removendo padding do body */
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden; /* Evita barra de rolagem horizontal */
+            overflow-x: hidden;
         }
         
-        /* Estilo para a área de conteúdo que ocupa a maior parte da tela */
         #game-content {
             width: 100%;
-            max-width: 1200px; /* Mantém um limite razoável para o conteúdo */
             flex-grow: 1;
-            min-height: 95vh; /* Ocupa a maior parte da altura visível */
-            padding: 1rem; /* Adiciona padding interno em vez do container */
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            transition: all 0.5s ease-in-out;
         }
 
-        /* Estilo para botões temáticos */
+        /* --- ANIMAÇÕES DE TRANSIÇÃO --- */
+        @keyframes fade-out-zoom {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.9); }
+        }
+        @keyframes fade-in-scale {
+            0% { opacity: 0; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes story-background-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-fade-out { animation: fade-out-zoom 0.5s forwards; }
+        .animate-fade-in { animation: fade-in-scale 0.5s forwards; }
+        .story-enter { animation: story-background-fade-in 1s ease-out forwards; }
+
+        /* --- ESTILOS TEMÁTICOS (VN E BOTÕES) --- */
         .btn-theme {
             transition: all 0.2s ease-in-out;
             @apply font-bold py-3 px-6 rounded-xl shadow-lg transform hover:scale-105;
         }
-        .btn-primary {
-            @apply btn-theme bg-wicked-green text-white hover:bg-green-700;
+        /* Adiciona estado de desabilitado */
+        .btn-theme:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none; /* Remove o hover:scale */
         }
-        .btn-correct {
-            @apply btn-theme bg-glinda-pink text-white hover:bg-pink-500;
-        }
-        .btn-incorrect {
-            @apply btn-theme bg-gray-400 text-white hover:bg-gray-500;
-        }
-        /* Estilo para o retrato da Glinda */
+
+        .btn-primary { @apply btn-theme bg-wicked-green text-white hover:bg-green-700; }
+        .btn-incorrect { @apply btn-theme bg-gray-400 text-white hover:bg-gray-500; }
+        
         .glinda-portrait {
             font-size: 5rem;
             line-height: 1;
         }
-
-        /* Estilo para o Visual Novel (caixa de diálogo) */
         .vn-dialog-box {
-            background-color: rgba(0, 0, 0, 0.85); /* Fundo semi-transparente escuro */
+            background-color: rgba(0, 0, 0, 0.85);
             color: white;
-            border-top: 5px solid #FFC0CB;
+            border-top: 5px solid #FF99CC; 
             min-height: 150px;
             padding: 1.5rem;
             border-radius: 0.5rem;
         }
-
-        /* Estilo para o fundo da Cidade Esmeralda usando a imagem carregada */
         .emerald-bg {
-            background-image: url('uploaded:cidadeEsmeralda.jpg-ca4ec5da-3a14-4286-9de5-ccdb7816c6e0');
-            background-size: cover; /* Revertido para 'cover' para preencher totalmente */
+            /* [Imagem de Fundo da Cidade Esmeralda] */
+            background-image: url('https://placehold.co/1920x1080/00A86B/FFFFFF?text=Cidade+Esmeralda'); 
+            background-image: url('https://i.imgur.com/xnrTEQh.jpeg'); 
+            background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-            /* Cor de fundo de Oz caso a imagem falhe ao carregar */
-            background-color: #228B22; 
+            background-color: #00A86B; 
         }
+
+        /* --- ESTILOS PARA AS ALTERNATIVAS --- */
+        .option-button {
+            transition: all 0.3s ease;
+            @apply w-full py-5 px-4 text-2xl text-left border-2 border-oz-yellow bg-white text-gray-800 rounded-xl shadow-md hover:bg-oz-yellow/30 font-medium;
+        }
+        .option-button.correct { @apply bg-hot-pink border-pink-700 text-white shadow-xl scale-105; }
+        .option-button.incorrect { @apply bg-red-400 border-red-600 text-white shadow-lg opacity-50; }
+        
+        /* --- ESTILOS DO CARD FLIP --- */
+        .perspective-1000 {
+            perspective: 1000px; 
+            height: 100%;
+            min-height: 500px; 
+        }
+        .flip-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 1s; 
+            transform-style: preserve-3d; 
+            transform: rotateY(0deg); 
+            min-height: inherit; 
+        }
+        .flip-card.is-flipped { transform: rotateY(180deg); }
+        .flip-card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; 
+            @apply bg-white p-8 rounded-3xl shadow-2xl border-8 border-oz-yellow; 
+        }
+        .flip-card-front { transform: rotateY(0deg); }
+        .flip-card-back {
+            transform: rotateY(180deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            @apply bg-white/95 shadow-inner; 
+        }
+        
+        /* --- INDICADOR DE LOADING DE ÁUDIO --- */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .audio-loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #FF99CC; /* glinda-pink */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        /* Loader para o botão amarelo */
+        .audio-loader.yellow {
+             border-top-color: #4b5563; /* gray-600 */
+             width: 16px;
+             height: 16px;
+             border-width: 2px;
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- Título do Jogo - Adicionado ID para ser ocultado/exibido -->
     <h1 id="main-title" class="text-4xl md:text-5xl font-extrabold text-center text-wicked-green mt-6 mb-6 border-b-4 border-glinda-pink pb-2 w-full max-w-4xl">
         Quiz de Oz: A Jornada Começa
     </h1>
 
-    <!-- Área de Conteúdo (Dinâmica) - Agora ocupa a maior parte da tela -->
     <div id="game-content">
-        <!-- O conteúdo será injetado aqui pelo JavaScript -->
+        <!-- O conteúdo é renderizado aqui via JavaScript -->
     </div>
 
-    <!-- Mensagens de Alerta (Substitui alert()) -->
-    <div id="message-box" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center">
+    <div id="message-box" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center p-4">
         <div id="message-text" class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center text-xl font-semibold border-4 border-oz-yellow">
-            <!-- Texto da mensagem vai aqui -->
             <button onclick="hideMessage()" class="btn-primary mt-4">Entendi</button>
         </div>
     </div>
@@ -117,38 +193,319 @@
         scores: {},
         phase: 'setup',
         currentQuestionIndex: 0,
-        currentTeamIndex: 0,
-        questionsUsed: new Set(),
+        teamOrder: [], 
+        teamOrderIndex: 0, 
         questionsUsedIds: new Set(),
-        // AGORA USANDO A REFERÊNCIA DA IMAGEM CARREGADA
-        EMERALD_CITY_BG_URL: 'uploaded:cidadeEsmeralda.jpg-ca4ec5da-3a14-4286-9de5-ccdb7816c6e0', 
+        currentStoryIndex: 0,
+        
         quizQuestions: [
-            { id: 1, q: "Qual o nome da universidade mágica onde Elphaba e Glinda se encontram pela primeira vez?" },
-            { id: 2, q: "Qual item Glinda sempre usa, que é uma grande parte de sua identidade e magia?" },
-            { id: 3, q: "Qual o nome do inventor da cadeira de rodas de Nessa Rose?" },
-            { id: 4, q: "Qual o título que Elphaba recebe quando é chamada para a Cidade Esmeralda?" },
-            { id: 5, q: "O que o Feiticeiro de Oz quer que Elphaba use para 'ajudar' os animais?" },
-            { id: 6, q: "Qual a cor dos sapatos que a irmã de Elphaba, Nessa Rose, recebe?" },
-            { id: 7, q: "Quem canta a música 'Popular'?" },
-            { id: 8, q: "Qual o apelido que Elphaba e Glinda dão ao seu professor de História?" },
-            { id: 9, q: "O que Glinda dá a Elphaba para fazê-la 'popular' no início?" },
-            { id: 10, q: "Qual criatura alada Glinda e Elphaba tentam libertar na Cidade Esmeralda?" },
-            { id: 11, q: "Qual o nome completo de Glinda (antes dela se tornar 'boa')?" },
-            { id: 12, q: "Em que lugar no palco (ou livro) Elphaba se transforma na Bruxa Má do Oeste?" }
+             { id: 1, q: "Qual o nome da universidade mágica onde Elphaba e Glinda se encontram pela primeira vez?", options: [
+                { text: "Academia de Munchkinland", isCorrect: false },
+                { text: "Universidade Shiz", isCorrect: true },
+                { text: "Instituto de Quadlings", isCorrect: false },
+                { text: "Colégio do Leste", isCorrect: false }
+            ]},
+            { id: 2, q: "Qual item Glinda sempre usa, que é uma grande parte de sua identidade e magia?", options: [
+                { text: "Um broche em forma de bolha", isCorrect: false },
+                { text: "Sua varinha mágica de bolhas", isCorrect: true },
+                { text: "Um par de luvas brancas", isCorrect: false },
+                { text: "Um chapéu com penas cor-de-rosa", isCorrect: false }
+            ]},
+             { id: 3, q: "Qual Animal é o professor de História em Shiz, que teme perder a voz?", options: [
+                { text: "Um Leão (que mais tarde se torna covarde)", isCorrect: false },
+                { text: "Um Macaco (que mais tarde ganha asas)", isCorrect: false },
+                { text: "Um Bode (Dr. Dillamond)", isCorrect: true },
+                { text: "Um Mágico (que na verdade é um humano)", isCorrect: false }
+            ]},
+            { id: 4, q: "Qual o título que Elphaba recebe quando é chamada para a Cidade Esmeralda?", options: [
+                { text: "A Maga Prodígio", isCorrect: false },
+                { text: "A Bruxa Má do Oeste", isCorrect: true },
+                { text: "A Feiticeira da Luz", isCorrect: false },
+                { text: "A Defensora dos Animais", isCorrect: false }
+            ]},
+            { id: 5, q: "O que o Feiticeiro de Oz quer que Elphaba use para 'ajudar' os animais (criando os macacos alados)?", options: [
+                { text: "Um cajado encantado", isCorrect: false },
+                { text: "O Grimmerie (Livro de Feitiços)", isCorrect: true },
+                { text: "Um livro de feitiços de Madame Morrible", isCorrect: false },
+                { text: "Um anel de controle mental", isCorrect: false }
+            ]},
+            { id: 6, q: "Qual a cor dos sapatos que a irmã de Elphaba, Nessa Rose, recebe de seu pai?", options: [
+                { text: "Vermelhos (Rubi)", isCorrect: false },
+                { text: "Verdes (Esmeralda)", isCorrect: false },
+                { text: "Prateados (com joias)", isCorrect: true },
+                { text: "Azuis (Azul Leste)", isCorrect: false }
+            ]},
+            { id: 7, q: "Quem canta a música 'Popular'?", options: [
+                { text: "Elphaba", isCorrect: false },
+                { text: "O Feiticeiro", isCorrect: false },
+                { text: "Glinda", isCorrect: true },
+                { text: "Fiyero", isCorrect: false }
+            ]},
+            { id: 8, q: "Qual o apelido que Elphaba e Glinda dão ao seu professor de História?", options: [
+                { text: "O Sabichão", isCorrect: false },
+                { text: "Professor Cabaça", isCorrect: false },
+                { text: "Dr. Dillamond (Professor Bode)", isCorrect: true },
+                { text: "Doutor Chifres", isCorrect: false }
+            ]},
+            { id: 9, q: "O que Glinda dá a Elphaba para fazê-la 'popular' no baile (Ozdust Ballroom)?", options: [
+                { text: "Um vestido rosa", isCorrect: false },
+                { text: "Um chapéu preto pontudo (que ela diz ser 'fashion')", isCorrect: true },
+                { text: "Um feitiço de beleza", isCorrect: false },
+                { text: "Um livro de etiqueta de Oz", isCorrect: false }
+            ]},
+            { id: 10, q: "Qual criatura alada Glinda e Elphaba tentam libertar na Cidade Esmeralda (que era um filhote de leão)?", options: [
+                { text: "Gárgulas Falantes", isCorrect: false },
+                { text: "Um filhote de Leão em uma jaula", isCorrect: true },
+                { text: "Corujas Sábias", isCorrect: false },
+                { text: "Macacos Alados", isCorrect: false }
+            ]},
+            { id: 11, q: "Qual o nome completo de Glinda (antes dela se tornar 'boa')?", options: [
+                { text: "Gillian Upland", isCorrect: false },
+                { text: "Galinda Upland", isCorrect: true },
+                { text: "Gloriana Pink", isCorrect: false },
+                { text: "Gloryanne Highcliff", isCorrect: false }
+            ]},
+            { id: 12, q: "Em que lugar no palco Elphaba canta 'Defying Gravity', decidindo seu destino?", options: [
+                { text: "No Castelo de Kiamo Ko", isCorrect: false },
+                { text: "Na Universidade Shiz", isCorrect: false },
+                { text: "Na Cidade Esmeralda, no topo da torre", isCorrect: true },
+                { text: "Na mansão da Madame Morrible", isCorrect: false }
+            ]}
         ],
         storyText: [
-            "Saudações, Queridos! Eu sou Glinda, a Bruxa Boa, e estou aqui para guiá-los através de uma história de amizade, magia e, claro, um pouco de competição! Sentem-se, acomodem-se e preparem-se para a aventura.",
-            "Nossa jornada começa muito antes da estrada de tijolos amarelos. Ela começa no coração de Oz, na prestigiada Universidade Shiz, um lugar de aprendizado e transformação. Eu, Glinda, cheguei lá com a cabeça cheia de sonhos... e uma bagagem cheia de sapatos fabulosos!",
-            "E foi lá que o destino me colocou no mesmo quarto que... bem, com Elphaba. Uma garota, como todos sabem, com a pele de uma cor que se destaca. Ah, e sim, ela era uma talentosa — mas um pouco impetuosa — feiticeira.",
-            "É claro que começamos como almas completamente opostas. Ela, intensa e reservada; eu, popular e, modéstia à parte, brilhante! Mas o que o destino uniu, nenhuma rivalidade poderia separar. Descobrimos que a amizade verdadeira pode superar qualquer diferença de cor ou temperamento.",
-            "Juntas, fomos à Cidade Esmeralda, enfrentamos a verdade sobre o Feiticeiro e aprendemos que nem tudo que é 'mau' é realmente maligno, e nem tudo que é 'bom' é totalmente puro.",
-            "Essa é a essência de Oz: o que pensamos saber pode estar completamente errado! E é essa verdade que guiará a próxima fase do nosso encontro. Os portões de Shiz estão se fechando, e agora, meus amigos, é hora de testar o seu conhecimento sobre a verdadeira história de Oz! O quiz de trivia aguarda!"
+            "Saudações viajantes, me chamo glinda \"A boa\" e estou aqui para te guiar",
+            "Se quer entrar na grande Cidade Esmeralda, siga o caminho de tijolos amarelos",
+            "E não se esqueça que os visitantes devem usar os Oculos Esmeralda para não ficarem cegos com o brilho da cidade !",
+            "Por ser um forasteiro eu tenho certeza de que tu ouviste os boatos sobre as mentiras do grande Magico que governa a cidade, o mesmo se intitula o mais mais poderoso da cidade",
+            "Ao visitar as nossas atrações tome cuidado com a Bruxa Má e seu grimorio magico, seu principal alvo são visitantes perdidos",
+            "E para ie embora volte até o caminho de tijolos amarelos e bata seus calcanhares 3 vezes, boa viagem!"
         ]
     };
 
-    // --- UTILS ---
+    let CURRENT_QUESTION_DATA = null; 
+    let storyKeyListener = null; 
 
-    /** Exibe uma mensagem modal na tela, substituindo alert() */
+    // --- CONTROLES DE ÁUDIO ---
+    let globalAudioPlayer = new Audio(); 
+    let isAudioLoading = false;
+    let isAudioUnlocked = false; // Variável para rastrear se o áudio foi destravado
+    let currentAudioController = null; // AbortController para cancelar fetches
+
+    /** Para o áudio atual que estiver tocando */
+    function stopCurrentAudio() {
+        if (globalAudioPlayer) {
+            globalAudioPlayer.pause();
+            globalAudioPlayer.src = ""; // Limpa a fonte, pronto para a próxima
+        }
+        if (currentAudioController) {
+            currentAudioController.abort(); // Cancela qualquer fetch de áudio em andamento
+        }
+        // Não reseta isAudioLoading aqui, é controlado pelo fetch
+    }
+
+    // --- UTILS DE CONVERSÃO DE ÁUDIO (PCM para WAV) ---
+
+    /** Converte Base64 para ArrayBuffer */
+    function base64ToArrayBuffer(base64) {
+        const binaryString = window.atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+
+    /** Converte dados PCM para um Blob WAV */
+    function pcmToWav(pcmData, sampleRate) {
+        const numSamples = pcmData.length;
+        const numChannels = 1;
+        const bitsPerSample = 16;
+        const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+        const blockAlign = numChannels * (bitsPerSample / 8);
+        
+        const buffer = new ArrayBuffer(44 + numSamples * 2);
+        const view = new DataView(buffer);
+
+        // RIFF header
+        writeString(view, 0, 'RIFF');
+        view.setUint32(4, 36 + numSamples * 2, true);
+        writeString(view, 8, 'WAVE');
+        // fmt chunk
+        writeString(view, 12, 'fmt ');
+        view.setUint32(16, 16, true); // chunk size
+        view.setUint16(20, 1, true); // audio format (1 = PCM)
+        view.setUint16(22, numChannels, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, byteRate, true);
+        view.setUint16(32, blockAlign, true);
+        view.setUint16(34, bitsPerSample, true);
+        // data chunk
+        writeString(view, 36, 'data');
+        view.setUint32(40, numSamples * 2, true);
+
+        // Write PCM data
+        let offset = 44;
+        for (let i = 0; i < numSamples; i++, offset += 2) {
+            view.setInt16(offset, pcmData[i], true);
+        }
+
+        return new Blob([view], { type: 'audio/wav' });
+    }
+
+    /** Helper para escrever strings no DataView */
+    function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i));
+        }
+    }
+
+    /** Função para resetar a UI do botão */
+    function resetAudioUI() {
+        isAudioLoading = false;
+        const playBtn = document.getElementById('manual-play-btn');
+        const playBtnText = document.getElementById('play-btn-text');
+        const loadingIndicator = document.getElementById('audio-loading');
+
+        if (playBtn) playBtn.disabled = false;
+        if (playBtnText) playBtnText.innerText = "Ouvir Narração";
+        if (loadingIndicator) loadingIndicator.classList.add('hidden');
+    }
+
+    /** Toca o áudio PCM recebido da API */
+    async function playAudioFromPCM(base64Data, mimeType) {
+        try {
+            const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+            const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000; // Default 24kHz
+
+            const pcmBuffer = base64ToArrayBuffer(base64Data);
+            const pcm16 = new Int16Array(pcmBuffer);
+            const wavBlob = pcmToWav(pcm16, sampleRate);
+            const audioUrl = URL.createObjectURL(wavBlob);
+
+            // Adiciona listeners para resetar a UI quando o áudio terminar
+            globalAudioPlayer.onended = resetAudioUI;
+            globalAudioPlayer.onerror = () => {
+                console.error("Erro ao tocar o áudio.");
+                resetAudioUI();
+            };
+
+            globalAudioPlayer.src = audioUrl; 
+            await globalAudioPlayer.play();
+
+        } catch (error) {
+            console.error("Erro ao processar áudio PCM:", error);
+            resetAudioUI(); // Reseta se a conversão falhar
+        }
+    }
+
+    // --- FUNÇÃO DE GERAÇÃO DE ÁUDIO (TTS) ---
+
+    /** Função chamada pelo botão "Ouvir Narração" */
+    function handleManualPlay() {
+        if (isAudioLoading) return; // Previne cliques duplos
+        
+        const text = GAME_STATE.storyText[GAME_STATE.currentStoryIndex];
+        fetchAndPlayAudio(text); 
+    }
+
+    /** Busca e toca o áudio para um texto específico */
+    async function fetchAndPlayAudio(text) {
+        if (isAudioLoading) return;
+        stopCurrentAudio(); // Para o áudio anterior antes de buscar um novo
+        
+        isAudioLoading = true;
+        currentAudioController = new AbortController(); 
+        const signal = currentAudioController.signal;
+
+        // --- ATUALIZA A UI DO BOTÃO DE PLAY ---
+        const playBtn = document.getElementById('manual-play-btn');
+        const playBtnText = document.getElementById('play-btn-text');
+        const loadingIndicator = document.getElementById('audio-loading');
+        
+        if (playBtn) playBtn.disabled = true;
+        if (playBtnText) playBtnText.innerText = "Carregando...";
+        if (loadingIndicator) loadingIndicator.classList.remove('hidden');
+        // --- FIM DA ATUALIZAÇÃO ---
+
+
+        // Voz 'Laomedeia' (Otimista)
+        const voiceName = "Laomedeia";
+        // Prompt de estilo para a voz
+        const promptText = `Leia com uma voz otimista e amigável, como Glinda: ${text}`;
+        
+        const apiKey = ""; // Deixe vazio, será gerenciado pelo ambiente
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+        const payload = {
+            contents: [{
+                parts: [{ text: promptText }]
+            }],
+            generationConfig: {
+                responseModalities: ["AUDIO"],
+                speechConfig: {
+                    voiceConfig: {
+                        prebuiltVoiceConfig: { voiceName: voiceName }
+                    }
+                }
+            },
+            model: "gemini-2.5-flash-preview-tts"
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: signal 
+            });
+
+            if (signal.aborted) {
+                console.log("Busca de áudio cancelada.");
+                resetAudioUI(); // Reseta se for abortado
+                return;
+            }
+
+            if (!response.ok) {
+                // Se o erro for 400, pode ser uma API Key inválida
+                if(response.status === 400) {
+                     console.error("Erro 400: Verifique se a API Key é válida ou se a API está habilitada.");
+                } else {
+                    console.error(`Erro na API TTS: ${response.statusText}`);
+                }
+                throw new Error(`Erro na API TTS: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            const part = result?.candidates?.[0]?.content?.parts?.[0];
+            const audioData = part?.inlineData?.data;
+            const mimeType = part?.inlineData?.mimeType;
+
+            if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                await playAudioFromPCM(audioData, mimeType); // Esta função agora lida com o reset no 'onended'
+            } else {
+                console.error("Resposta da API TTS inesperada:", result);
+                resetAudioUI(); // Reseta se não houver dados de áudio
+            }
+
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error("Erro ao gerar áudio:", error);
+            }
+            resetAudioUI(); // Reseta em caso de erro
+        }
+    }
+
+
+    // --- UTILS DO JOGO ---
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
     function showMessage(text) {
         document.getElementById('message-text').innerHTML = `
             <p>${text}</p>
@@ -158,17 +515,13 @@
         document.getElementById('message-box').classList.add('flex');
     }
 
-    /** Esconde a mensagem modal */
     function hideMessage() {
         document.getElementById('message-box').classList.remove('flex');
         document.getElementById('message-box').classList.add('hidden');
     }
     
-    /** Gerencia a visibilidade do título principal da tela */
     function updateScreenLayout() {
         const titleElement = document.getElementById('main-title');
-
-        // Oculta o título na fase da história para o visual novel limpo
         if (GAME_STATE.phase === 'story') {
             titleElement.classList.add('hidden');
         } else {
@@ -176,38 +529,80 @@
         }
     }
 
+    // --- FUNÇÕES DE EVENTO DE TECLADO ---
+    function setupStoryKeyListener() {
+        removeStoryKeyListener();
+        storyKeyListener = function(event) {
+            if (event.key === 'Enter' || event.keyCode === 13) {
+                event.preventDefault(); 
+                const isLast = GAME_STATE.currentStoryIndex === GAME_STATE.storyText.length - 1;
+                if (isLast) {
+                    startQuiz();
+                } else {
+                    nextStory();
+                }
+            }
+        };
+        document.addEventListener('keydown', storyKeyListener);
+    }
+
+    function removeStoryKeyListener() {
+        if (storyKeyListener) {
+            document.removeEventListener('keydown', storyKeyListener);
+            storyKeyListener = null;
+        }
+    }
+
 
     // --- FUNÇÕES DE RENDERIZAÇÃO DE FASE ---
 
     function renderSetupPhase() {
+        removeStoryKeyListener(); 
+        
         GAME_STATE.phase = 'setup';
         updateScreenLayout();
         const content = document.getElementById('game-content');
         
-        // Remove classes de fundo VN e restaura o layout normal
-        content.classList.remove('emerald-bg', 'h-screen', 'w-screen', 'fixed', 'top-0', 'left-0', 'p-0', 'm-0');
-        document.body.style.overflow = 'auto'; 
+        content.classList.remove('emerald-bg', 'fixed', 'inset-0', 'p-0', 'm-0', 'h-screen', 'w-screen', 'top-0', 'left-0', 'story-enter', 'animate-fade-in', 'animate-fade-out');
+        content.style.height = 'auto';
         content.style.minHeight = 'auto';
+        document.body.style.overflow = 'auto'; 
 
         content.innerHTML = `
-            <!-- Novo wrapper para centralizar o conteúdo e dar um fundo limpo -->
-            <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-xl">
-                <h2 class="text-3xl font-semibold mb-6 text-center text-oz-yellow bg-wicked-green p-3 rounded-xl shadow-inner">
-                    Fase 1: Configuração dos Grupos
+            <div class="w-full max-w-7xl mx-auto bg-glinda-pink/10 p-8 md:p-16 rounded-3xl shadow-2xl border-4 border-wicked-green transform transition duration-300">
+                
+                <h2 class="text-4xl lg:text-5xl font-extrabold mb-4 text-center text-wicked-green flex items-center justify-center">
+                    <span class="text-5xl lg:text-6xl mr-3 text-oz-yellow">👑</span>
+                    Fase 1: Convocação dos Times de Oz
+                    <span class="text-5xl lg:text-6xl ml-3 text-oz-yellow">👑</span>
                 </h2>
-                <p class="text-center mb-6 text-lg text-gray-700">
-                    Insira os nomes dos 6 grupos que participarão do Quiz de Oz.
+                
+                <p class="text-center mb-10 text-xl lg:text-2xl text-gray-700 italic border-b-2 border-glinda-pink pb-4 max-w-4xl mx-auto">
+                    Reúnam seus 6 grupos! Quem levará a glória da Cidade Esmeralda? Insira os nomes de suas equipes abaixo.
                 </p>
-                <form id="team-form" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
+                
+                <form id="team-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     ${Array(6).fill().map((_, i) => `
                         <div class="relative">
-                            <label for="team-${i}" class="text-sm font-medium text-gray-700">Grupo ${i + 1}</label>
-                            <input type="text" id="team-${i}" class="team-input mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:border-glinda-pink focus:ring-glinda-pink" placeholder="Ex: Macacos Alados" required maxlength="25">
+                            <label for="team-${i}" class="text-xl font-bold text-glinda-pink block mb-2">
+                                Time ${i + 1}
+                            </label>
+                            <input type="text" id="team-${i}" 
+                                class="team-input mt-1 block w-full p-4 md:p-5 border-2 border-wicked-green rounded-xl shadow-lg 
+                                        focus:ring-4 focus:ring-glinda-pink focus:border-glinda-pink transition duration-150 text-xl
+                                        placeholder-gray-400" 
+                                placeholder="Nome do seu time" required maxlength="25">
                         </div>
                     `).join('')}
-                    <div class="md:col-span-2 text-center mt-6">
-                        <button type="submit" class="btn-primary w-full md:w-auto">
-                            Começar a História de Glinda
+                    <div class="md:col-span-2 lg:col-span-3 text-center mt-10">
+                        <button type="submit" 
+                                class="w-full md:w-3/4 lg:w-2/3 font-extrabold py-5 px-8 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 
+                                    bg-gradient-to-r from-glinda-pink to-hot-pink text-white border-4 border-oz-yellow hover:from-hot-pink hover:to-glinda-pink group 
+                                    focus:outline-none focus:ring-4 focus:ring-wicked-green/50">
+                            <span class="flex items-center justify-center text-2xl lg:text-3xl">
+                                Começar a História de Glinda
+                                <span class="ml-3 text-3xl group-hover:rotate-12 transition-transform duration-300">✨</span>
+                            </span>
                         </button>
                     </div>
                 </form>
@@ -219,6 +614,28 @@
 
     function handleTeamSetup(event) {
         event.preventDefault();
+
+        // --- DESTRAVA O ÁUDIO NA PRIMEIRA INTERAÇÃO ---
+        if (!isAudioUnlocked) {
+            // Carga de um WAV silencioso de 0.5s em Base64 para "destravar" o player
+            globalAudioPlayer.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+            globalAudioPlayer.play().then(() => {
+                globalAudioPlayer.pause();
+                globalAudioPlayer.currentTime = 0; // Reinicia para o início
+                console.log("Contexto de áudio destravado com áudio silencioso.");
+                isAudioUnlocked = true;
+            }).catch(e => {
+                console.warn("Tentativa de destravar áudio falhou (tentando plano B):", e.message);
+                // Tenta destravar sem fonte (plano B para alguns navegadores)
+                globalAudioPlayer.src = ""; // Limpa a fonte
+                globalAudioPlayer.play().catch(e2 => {});
+                globalAudioPlayer.pause();
+                isAudioUnlocked = true; // Assume que destravou mesmo com erro
+            });
+        }
+        // --- FIM DA CORREÇÃO ---
+
+
         const inputs = document.querySelectorAll('.team-input');
         const teamNames = [];
 
@@ -226,7 +643,6 @@
             const name = input.value.trim();
             if (name) {
                 teamNames.push(name);
-                GAME_STATE.scores[name] = 0;
             }
         });
 
@@ -236,8 +652,23 @@
         }
 
         GAME_STATE.teams = teamNames;
-        GAME_STATE.currentStoryIndex = 0;
-        renderStoryPhase();
+        GAME_STATE.scores = teamNames.reduce((acc, name) => {
+            acc[name] = 0;
+            return acc;
+        }, {});
+        GAME_STATE.teamOrder = [...teamNames]; 
+        shuffleArray(GAME_STATE.teamOrder); 
+        GAME_STATE.teamOrderIndex = 0; 
+        
+        const content = document.getElementById('game-content');
+        content.classList.add('animate-fade-out');
+
+        setTimeout(() => {
+            GAME_STATE.currentStoryIndex = 0;
+            setupStoryKeyListener(); 
+            content.classList.remove('animate-fade-out'); 
+            renderStoryPhase(); 
+        }, 500); 
     }
 
     function renderStoryPhase() {
@@ -248,68 +679,97 @@
         const currentText = GAME_STATE.storyText[storyIndex];
         const isLast = storyIndex === GAME_STATE.storyText.length - 1;
 
-        // Adiciona classes para o Visual Novel (fundo e altura total)
-        content.classList.add('emerald-bg', 'h-screen', 'w-screen', 'fixed', 'top-0', 'left-0', 'p-0', 'm-0');
-        content.style.minHeight = '100vh'; // Garante que ocupe a altura total
+        content.classList.add('emerald-bg', 'fixed', 'inset-0', 'p-0', 'm-0', 'story-enter');
+        content.style.height = '100vh';
+        content.style.minHeight = '100vh';
         document.body.style.overflow = 'hidden';
 
         content.innerHTML = `
-            <!-- Contêiner do Visual Novel (Layout flex para empurrar diálogo para baixo) -->
             <div class="w-full h-full flex flex-col justify-end p-4 md:p-8">
                 
-                <!-- Personagem (Glinda) - Posicionado lateralmente e em cima do dialog box -->
                 <div class="flex justify-start ml-2 mb-[-20px] z-10">
-                    <div class="glinda-portrait text-glinda-pink flex-shrink-0 text-shadow-lg">
+                    <div class="glinda-portrait text-glinda-pink flex-shrink-0" style="text-shadow: 0 4px 15px rgba(255, 105, 180, 0.7);">
                         ✨
                     </div>
                 </div>
 
-                <!-- Caixa de Diálogo (Estilo Amor Doce) -->
                 <div class="vn-dialog-box w-full max-w-full z-20">
-                    <h3 class="text-xl font-bold text-glinda-pink mb-2">Glinda, a Bruxa Boa:</h3>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xl font-bold text-glinda-pink">Glinda, a Bruxa Boa:</h3>
+                    </div>
+                    
                     <p class="text-lg leading-relaxed italic mb-4">
                         "${currentText}"
                     </p>
-
-                    <!-- Controles de Navegação -->
-                    <div class="text-right">
-                        <button onclick="${isLast ? 'startQuiz()' : 'nextStory()'} " class="btn-theme bg-glinda-pink text-white hover:bg-pink-500 py-2 px-4 text-sm">
-                            ${isLast ? 'Iniciar o Quiz de Oz! >>' : 'Continuar >>'}
+                    
+                    <!-- ÁREA DE BOTÕES ATUALIZADA -->
+                    <div class="flex justify-between items-center mt-4">
+                        <!-- Botão de Play Manual -->
+                        <button id="manual-play-btn" onclick="handleManualPlay()" class="btn-theme bg-oz-yellow text-gray-900 hover:bg-yellow-300 py-2 px-4 text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="play-btn-text" class="mr-2">Ouvir Narração</span>
+                            <!-- Ícone de Play (SVG) -->
+                            <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                                <path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25v-4.5a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" />
+                            </svg>
+                            <!-- Loader -->
+                            <div id="audio-loading" class="audio-loader yellow ml-2 hidden"></div>
                         </button>
+
+                        <!-- Botão de Continuar -->
+                        <div class="text-right">
+                            <button onclick="${isLast ? 'startQuiz()' : 'nextStory()'}" class="btn-theme bg-glinda-pink text-white hover:bg-pink-500 py-2 px-4 text-sm">
+                                ${isLast ? 'Iniciar o Quiz! >>' : 'Continuar >>'}
+                            </button>
+                            <p class="text-xs text-gray-400 mt-2">Clique ou pressione ENTER para continuar</p>
+                        </div>
                     </div>
+                    <!-- FIM DA ÁREA DE BOTÕES -->
                 </div>
             </div>
         `;
     }
 
     function nextStory() {
+        stopCurrentAudio(); // Para o áudio ao avançar
+        resetAudioUI(); // Garante que o botão seja resetado
         if (GAME_STATE.currentStoryIndex < GAME_STATE.storyText.length - 1) {
             GAME_STATE.currentStoryIndex++;
-            renderStoryPhase();
+            renderStoryPhase(); 
         }
     }
 
     function startQuiz() {
-        GAME_STATE.phase = 'quiz';
-        GAME_STATE.currentTeamIndex = 0;
-        GAME_STATE.currentQuestionIndex = 0;
-        GAME_STATE.questionsUsedIds.clear(); // Limpar IDs das perguntas usadas caso haja restart
+        removeStoryKeyListener(); 
+        stopCurrentAudio(); // Para o áudio da história
+        resetAudioUI();
         
-        // Remove o fundo VN e restaura o fluxo normal
-        document.getElementById('game-content').classList.remove('emerald-bg', 'h-screen', 'w-screen', 'fixed', 'top-0', 'left-0', 'p-0', 'm-0');
-        document.body.style.overflow = 'auto'; // Restaura o scroll
-        document.getElementById('game-content').style.minHeight = 'auto';
-
-        renderQuizPhase();
+        const content = document.getElementById('game-content');
+        content.classList.add('animate-fade-out');
+        
+        setTimeout(() => {
+            GAME_STATE.phase = 'quiz';
+            GAME_STATE.teamOrderIndex = 0; 
+            GAME_STATE.currentQuestionIndex = 0;
+            GAME_STATE.questionsUsedIds.clear();
+            
+            content.classList.remove('emerald-bg', 'fixed', 'inset-0', 'p-0', 'm-0', 'story-enter', 'animate-fade-out');
+            content.style.height = 'auto';
+            content.style.minHeight = 'auto';
+            document.body.style.overflow = 'auto';
+            
+            content.classList.add('animate-fade-in'); 
+            renderQuizPhase();
+            setTimeout(() => { content.classList.remove('animate-fade-in'); }, 500);
+            
+        }, 500); 
     }
 
-    // Função que renderiza o Placar lateral (ou superior em mobile)
     function renderScoreboard() {
         const sortedTeams = Object.entries(GAME_STATE.scores).sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
 
         return `
-            <div class="w-full md:w-64 md:sticky md:top-0 bg-white p-4 rounded-xl shadow-2xl border-2 border-oz-yellow/50 flex-shrink-0">
-                <h3 class="text-xl font-bold text-center mb-3 text-wicked-green border-b pb-2">Placar Atual</h3>
+            <div class="w-full md:w-64 md:sticky md:top-4 bg-white p-4 rounded-xl shadow-2xl border-2 border-wicked-green flex-shrink-0 md:h-min">
+                <h3 class="text-xl font-bold text-center mb-3 text-glinda-pink border-b pb-2">Placar Atual</h3>
                 <ul class="space-y-2">
                     ${sortedTeams.map(([team, score]) => `
                         <li class="flex justify-between items-center text-lg">
@@ -322,158 +782,280 @@
         `;
     }
 
+    function continueQuizRound() {
+        const quizCard = document.getElementById('quiz-card');
+        if (quizCard) {
+            quizCard.classList.remove('is-flipped');
+        }
+
+        if (GAME_STATE.questionsUsedIds.size < GAME_STATE.quizQuestions.length) {
+            setTimeout(() => {
+                const content = document.getElementById('game-content');
+                content.classList.add('animate-fade-in'); 
+                renderQuizPhase();
+                setTimeout(() => { content.classList.remove('animate-fade-in'); }, 500);
+            }, 800);
+        } else {
+            setTimeout(() => {
+                 const content = document.getElementById('game-content');
+                 content.classList.add('animate-fade-out');
+                 setTimeout(() => {
+                    content.classList.remove('animate-fade-out');
+                    content.classList.add('animate-fade-in');
+                    renderResultsPhase();
+                    setTimeout(() => content.classList.remove('animate-fade-in'), 500);
+                 }, 500);
+            }, 800);
+        }
+    }
+    
+    function getNextRandomQuestion() {
+        if (GAME_STATE.questionsUsedIds.size >= GAME_STATE.quizQuestions.length) {
+            return null;
+        }
+        
+        let availableQuestions = GAME_STATE.quizQuestions.filter(q => !GAME_STATE.questionsUsedIds.has(q.id));
+        
+        if (availableQuestions.length === 0) return null;
+
+        const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+        const question = availableQuestions[randomIndex];
+        
+        GAME_STATE.questionsUsedIds.add(question.id);
+        return question;
+    }
+
     function renderQuizPhase() {
         GAME_STATE.phase = 'quiz';
         updateScreenLayout();
         
-        // Se todas as perguntas foram usadas (um ciclo completo), encerra
         if (GAME_STATE.questionsUsedIds.size >= GAME_STATE.quizQuestions.length) {
             return renderResultsPhase();
         }
 
-        const teamName = GAME_STATE.teams[GAME_STATE.currentTeamIndex];
+        const teamName = GAME_STATE.teamOrder[GAME_STATE.teamOrderIndex];
         const questionData = getNextRandomQuestion();
         
         if (!questionData) return renderResultsPhase(); 
-
+        
+        CURRENT_QUESTION_DATA = questionData; 
         const question = questionData.q;
+        const options = [...questionData.options];
         const content = document.getElementById('game-content');
+        const currentRound = GAME_STATE.questionsUsedIds.size;
+
+        shuffleArray(options);
 
         content.innerHTML = `
-            <div class="max-w-4xl mx-auto p-4">
-                <div class="flex flex-col md:flex-row gap-6">
-                    <!-- Placar -->
+            <div class="max-w-7xl mx-auto p-4 w-full"> 
+                <div class="flex flex-col md:flex-row gap-10"> 
+                    
                     ${renderScoreboard()}
 
-                    <!-- Área da Pergunta -->
-                    <div class="flex-grow bg-white p-6 rounded-xl shadow-2xl border-4 border-wicked-green">
-                        <h2 class="text-2xl font-bold mb-4 text-glinda-pink">Rodada ${GAME_STATE.questionsUsedIds.size} de ${GAME_STATE.quizQuestions.length}</h2>
-                        
-                        <div class="text-center p-4 bg-oz-yellow/20 rounded-lg mb-6 border-2 border-oz-yellow">
-                            <p class="text-xl font-semibold text-gray-800">
-                                Pergunta Sorteada para: 
-                                <span class="text-wicked-green font-extrabold text-2xl">${teamName}</span>
-                            </p>
+                    <div class="flex-grow w-full perspective-1000"> 
+                        <div id="quiz-card" class="flip-card">
+
+                            <div id="card-front" class="flip-card-face flip-card-front">
+                                
+                                <div class="card-header bg-gradient-to-r from-wicked-green to-green-700 text-center text-white py-4 rounded-t-3xl mb-6 -mt-8 mx-[-2rem] border-b-8 border-hot-pink shadow-2xl flex items-center justify-center">
+                                    <span class="text-3xl mr-3">✨</span>
+                                    <h2 class="text-3xl font-extrabold tracking-wider">Desafio de Oz</h2>
+                                    <span class="text-3xl ml-3">✨</span>
+                                </div>
+
+                                <h3 class="text-xl font-bold mb-4 text-glinda-pink">Rodada ${currentRound} de ${GAME_STATE.quizQuestions.length}</h3>
+                                
+                                <div class="text-center p-4 bg-oz-yellow rounded-xl mb-6 border-4 border-wicked-green shadow-xl">
+                                    <p class="text-xl font-semibold text-gray-900">
+                                        Momento do Time: 
+                                        <span class="font-extrabold text-gray-900 text-3xl">${teamName}</span>
+                                    </p>
+                                </div>
+                                
+                                <p class="text-3xl font-semibold text-gray-900 leading-relaxed mb-8">
+                                    <span class="font-black text-wicked-green mr-2 text-4xl">Q:</span> ${question}
+                                </p>
+
+                                <div id="options-area" class="space-y-4">
+                                    ${options.map((opt, index) => `
+                                        <button 
+                                            class="option-button" 
+                                            onclick="handleOptionClick(${opt.isCorrect}, this, '${opt.text}')">
+                                            <span class="font-extrabold text-glinda-pink mr-2 text-2xl">${String.fromCharCode(65 + index)}:</span> ${opt.text}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                                
+                                <p class="text-center text-sm text-gray-500 mt-6 italic">
+                                    (Mediador: Clique na alternativa escolhida pelo time para registrar a pontuação.)
+                                </p>
+                            </div>
+
+                            <div id="card-back" class="flip-card-face flip-card-back">
+                            </div>
                         </div>
-
-                        <!-- Pergunta -->
-                        <p class="text-2xl font-light text-gray-900 leading-relaxed mb-8">
-                            <span class="font-bold text-wicked-green">P:</span> ${question}
-                        </p>
-
-                        <!-- Botões de Ação -->
-                        <div class="flex justify-center space-x-4 mt-6">
-                            <button onclick="recordAnswer(true)" class="btn-correct flex-1">
-                                ✅ Resposta Correta (+1 Ponto)
-                            </button>
-                            <button onclick="recordAnswer(false)" class="btn-incorrect flex-1">
-                                ❌ Resposta Incorreta (0 Pontos)
-                            </button>
-                        </div>
-
-                        <!-- Aviso -->
-                        <p class="text-center text-sm text-gray-500 mt-6 italic">
-                            (Como mediador, clique no botão apropriado após a resposta do time.)
-                        </p>
                     </div>
                 </div>
             </div>
         `;
     }
 
-    function getNextRandomQuestion() {
-        // Filtra apenas as perguntas cujos IDs ainda não estão no conjunto questionsUsedIds
-        const availableQuestions = GAME_STATE.quizQuestions.filter(q => !GAME_STATE.questionsUsedIds.has(q.id));
-
-        if (availableQuestions.length === 0) {
-            return null; // Não há mais perguntas disponíveis
-        }
-
-        const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-        const questionData = availableQuestions[randomIndex];
+    function handleOptionClick(isCorrect, clickedButton, selectedOptionText) {
+        const optionsArea = document.getElementById('options-area');
+        const allButtons = optionsArea.querySelectorAll('button');
         
-        // Marcar a pergunta como usada
-        GAME_STATE.questionsUsedIds.add(questionData.id);
-        
-        return questionData;
-    }
+        const teamName = GAME_STATE.teamOrder[GAME_STATE.teamOrderIndex];
 
-    function recordAnswer(isCorrect) {
-        const teamName = GAME_STATE.teams[GAME_STATE.currentTeamIndex];
-        let message = '';
+        allButtons.forEach(btn => btn.onclick = null);
+
+        const correctAnswer = CURRENT_QUESTION_DATA.options.find(opt => opt.isCorrect);
+        const correctAnswerText = correctAnswer.text;
+
+        allButtons.forEach(btn => {
+            const buttonText = btn.innerText.substring(btn.innerText.indexOf(':') + 2);
+            
+            if (btn === clickedButton) {
+                if (isCorrect) {
+                    btn.classList.add('correct');
+                } else {
+                    btn.classList.add('incorrect');
+                }
+            } else if (buttonText === correctAnswerText) {
+                btn.classList.add('bg-hot-pink/30', 'border-hot-pink');
+            } else {
+                btn.classList.add('opacity-40');
+            }
+        });
 
         if (isCorrect) {
             GAME_STATE.scores[teamName] += 1;
-            message = `🎉 Ponto para o time ${teamName}! Parabéns, essa foi uma resposta fabulosa!`;
-        } else {
-            message = `😞 O time ${teamName} errou. Não se preocupe, há mais rodadas em Oz!`;
         }
 
-        showMessage(message);
+        GAME_STATE.teamOrderIndex = (GAME_STATE.teamOrderIndex + 1) % GAME_STATE.teamOrder.length;
 
-        // Avança para o próximo time (ciclo por todos os 6 times)
-        GAME_STATE.currentTeamIndex = (GAME_STATE.currentTeamIndex + 1) % GAME_STATE.teams.length;
-        
-        // Um pequeno atraso para a animação da caixa de mensagem sumir antes de renderizar a próxima rodada
+        const cardBack = document.getElementById('card-back');
+        cardBack.innerHTML = `
+            <div class="h-full w-full flex flex-col justify-center items-center p-8 text-center bg-white/95 rounded-2xl">
+                <h3 class="text-4xl font-extrabold mb-6 text-glinda-pink">Resultado Mágico</h3>
+                
+                ${isCorrect ? 
+                    `<p class="text-5xl mb-4 text-hot-pink">✨ CORRETO! ✨</p>
+                     <p class="text-2xl text-gray-800">Ponto para o time <strong>${teamName}</strong>! Parabéns, essa foi uma resposta fabulosa!</p>` :
+                    `<p class="text-5xl mb-4 text-red-600">❌ INCORRETO ❌</p>
+                     <p class="text-2xl text-gray-800">O time <strong>${teamName}</strong> errou! A Bruxa Má não ficaria feliz.</p>`
+                }
+
+                <div class="mt-8 p-6 rounded-xl w-full max-w-sm border-4 ${isCorrect ? 'border-hot-pink bg-hot-pink/10' : 'border-red-600 bg-red-100'}">
+                    <p class="text-xl font-bold text-gray-700 mb-2">A Resposta Certa Era:</p>
+                    <p class="text-2xl font-extrabold text-hot-pink">${correctAnswerText}</p>
+                </div>
+
+                <button onclick="continueQuizRound()" class="btn-theme bg-wicked-green text-white hover:bg-green-700 mt-10 py-4 px-8 text-2xl">
+                    Próxima Rodada >>
+                </button>
+            </div>
+        `;
+
         setTimeout(() => {
-            // Continua a rodada de quiz se ainda houver perguntas não usadas
-            if (GAME_STATE.questionsUsedIds.size < GAME_STATE.quizQuestions.length) {
-                renderQuizPhase();
-            } else {
-                renderResultsPhase();
-            }
-        }, 500); // 0.5 segundo
+            document.getElementById('quiz-card').classList.add('is-flipped');
+        }, 500);
     }
 
     function renderResultsPhase() {
         GAME_STATE.phase = 'results';
         updateScreenLayout();
+        removeStoryKeyListener();
+        stopCurrentAudio(); // Garante que nenhum áudio da história esteja tocando
+
         const content = document.getElementById('game-content');
         
-        const finalScores = Object.entries(GAME_STATE.scores).sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
-        const winnerScore = finalScores[0][1];
-        const isTie = finalScores.length > 1 && finalScores[0][1] === finalScores[1][1];
-        
-        const winnerMessage = isTie 
-            ? `Um empate esmeralda! Vários times compartilham a vitória com ${winnerScore} pontos!`
-            : `O grande vencedor é o time ${finalScores[0][0]} com ${winnerScore} pontos! Fantástico!`;
+        content.classList.remove('animate-fade-in', 'animate-fade-out');
+        content.style.height = 'auto';
+        content.style.minHeight = 'auto';
 
-        // Novo wrapper para centralizar o conteúdo final
+        const sortedTeams = Object.entries(GAME_STATE.scores).sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
+        const winner = sortedTeams[0];
+        const winners = sortedTeams.filter(team => team[1] === winner[1]);
+
         content.innerHTML = `
-            <div class="max-w-4xl mx-auto p-4">
-                <div class="text-center p-8 bg-glinda-pink/20 rounded-2xl shadow-2xl border-4 border-glinda-pink">
-                    <h2 class="text-5xl font-extrabold text-wicked-green mb-4">
-                        ${isTie ? '⭐ Empate Mágico! ⭐' : '👑 Vencedor de Oz! 👑'}
-                    </h2>
-                    <p class="text-2xl mb-8 text-gray-800">${winnerMessage}</p>
-                    
-                    <!-- Placar Final Detalhado -->
-                    <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-inner border-2 border-oz-yellow">
-                        <h3 class="text-xl font-bold mb-4 text-wicked-green">Placar Final</h3>
-                        <ul class="space-y-3">
-                            ${finalScores.map(([team, score], index) => `
-                                <li class="flex justify-between items-center p-2 rounded-lg ${index === 0 && !isTie ? 'bg-oz-yellow/30 font-bold' : 'bg-gray-50'}">
-                                    <span class="text-xl text-gray-800">${index + 1}. ${team}</span>
-                                    <span class="text-3xl font-mono text-wicked-green">${score}</span>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </div>
+            <div class="w-full max-w-5xl mx-auto bg-white p-8 md:p-16 rounded-3xl shadow-2xl border-8 border-oz-yellow transform transition duration-300 animate-fade-in">
+                
+                <h2 class="text-5xl lg:text-6xl font-extrabold mb-6 text-center text-wicked-green flex items-center justify-center">
+                    <span class="text-6xl lg:text-7xl mr-3 text-oz-yellow">🏆</span>
+                    Resultados Finais!
+                    <span class="text-6xl lg:text-7xl ml-3 text-oz-yellow">🏆</span>
+                </h2>
 
-                    <!-- Botão de Recomeçar -->
-                    <button onclick="window.location.reload()" class="btn-primary mt-8">
-                        Jogar Novamente e Descobrir Novas Verdades em Oz
+                <div class="text-center bg-gradient-to-r from-glinda-pink to-hot-pink text-white p-8 rounded-2xl shadow-xl mb-10 border-4 border-white">
+                    ${winners.length > 1 ?
+                        `<h3 class="text-3xl font-bold mb-2">Temos um Empate Fabuloso!</h3>
+                         <p class="text-4xl font-extrabold">${winners.map(w => w[0]).join(' e ')}</p>
+                         <p class="text-3xl mt-2">Com ${winner[1]} pontos cada!</p>` :
+                        `<h3 class="text-3xl font-bold mb-2">O Grande Vencedor de Oz é...</h3>
+                         <p class="text-5xl font-extrabold">${winner[0]}</p>
+                         <p class="text-3xl mt-2">Com ${winner[1]} pontos!</p>`
+                    }
+                </div>
+
+                <h4 classZ="text-3xl font-bold text-center text-glinda-pink mb-6">Placar Final</h4>
+                
+                <ul class="space-y-3 max-w-2xl mx-auto">
+                    ${sortedTeams.map(([team, score], index) => `
+                        <li class="flex justify-between items-center text-2xl p-4 rounded-xl shadow-md ${index < winners.length ? 'bg-oz-yellow/30 border-2 border-oz-yellow' : 'bg-gray-100'}">
+                            <span class="font-bold ${index < winners.length ? 'text-wicked-green' : 'text-gray-800'}">
+                                ${index + 1}. ${team}
+                            </span>
+                            <span class="text-3xl font-mono ${index < winners.length ? 'text-wicked-green' : 'text-gray-600'}">${score}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+
+                <div class="text-center mt-12">
+                    <button onclick="restartGame()" 
+                            class="w-full md:w-2/3 font-extrabold py-5 px-8 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 
+                                    bg-gradient-to-r from-wicked-green to-green-700 text-white border-4 border-oz-yellow hover:from-green-700 hover:to-wicked-green group 
+                                    focus:outline-none focus:ring-4 focus:ring-glinda-pink/50">
+                        <span class="flex items-center justify-center text-2xl lg:text-3xl">
+                            Jogar Novamente
+                            <span class="ml-3 text-3xl group-hover:rotate-180 transition-transform duration-300">🔄</span>
+                        </span>
                     </button>
                 </div>
             </div>
         `;
     }
 
-    // --- INICIALIZAÇÃO ---
-    window.onload = function() {
+    function restartGame() {
+        stopCurrentAudio(); // Para qualquer áudio
+        const content = document.getElementById('game-content');
+        
+        content.classList.add('animate-fade-out');
+
+        setTimeout(() => {
+            GAME_STATE.teams = [];
+            GAME_STATE.scores = {};
+            GAME_STATE.phase = 'setup';
+            GAME_STATE.teamOrder = [];
+            GAME_STATE.teamOrderIndex = 0;
+            GAME_STATE.questionsUsedIds.clear();
+            GAME_STATE.currentStoryIndex = 0;
+            isAudioUnlocked = false; // Reseta o destravamento
+            
+            content.classList.remove('animate-fade-out');
+            content.classList.add('animate-fade-in');
+            
+            renderSetupPhase();
+            
+            setTimeout(() => content.classList.remove('animate-fade-in'), 500);
+        }, 500);
+    }
+
+
+    // --- INICIALIZAÇÃO DO JOGO ---
+    window.onload = () => {
         renderSetupPhase();
     };
-</script>
 
+</script>
 </body>
 </html>
