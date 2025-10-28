@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wicked Quiz: A História de Glinda</title>
     
-    <!-- Carrega o Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Configuração de Cores e Fontes do Tailwind -->
-    <script>
+<script src="https://cdn.tailwindcss.com"></script>
+    
+    
+<script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -40,13 +40,12 @@
             flex-direction: column;
             align-items: center;
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Evita scroll horizontal */
         }
         
         #game-content {
             width: 100%;
             flex-grow: 1;
-            /* min-height: 85vh; */ /* Removido para permitir que o setup cresça */
             padding: 1rem;
             display: flex;
             flex-direction: column;
@@ -65,8 +64,8 @@
             0% { opacity: 0; transform: scale(0.98); }
             100% { opacity: 1; transform: scale(1); }
         }
-        /* Efeito de entrada suave (para o fundo da história) */
-        @keyframes story-background-fade-in {
+        /* Efeito de entrada suave (para o fundo da história e quiz) */
+        @keyframes background-fade-in {
             from { opacity: 0; }
             to { opacity: 1; }
         }
@@ -79,8 +78,20 @@
             animation: fade-in-scale 0.5s forwards;
         }
 
-        .story-enter {
-            animation: story-background-fade-in 1s ease-out forwards;
+        /* Fundo para Story e Quiz */
+        .emerald-bg-game { 
+            animation: background-fade-in 1s ease-out forwards;
+            background-image: url('https://i.imgur.com/xnrTEQh.jpeg'); 
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #00A86B; /* Fallback */
+            width: 100%;
+            height: 100%;
+            position: fixed; /* Fundo fixo para cobrir toda a tela */
+            top: 0;
+            left: 0;
+            z-index: -1; /* Para ficar atrás do conteúdo */
         }
 
 
@@ -90,52 +101,60 @@
             @apply font-bold py-3 px-6 rounded-xl shadow-lg transform hover:scale-105;
         }
         .btn-primary {
-            /* Usa o novo wicked-green */
             @apply btn-theme bg-wicked-green text-white hover:bg-green-700;
-        }
-        .btn-incorrect {
-            @apply btn-theme bg-gray-400 text-white hover:bg-gray-500;
         }
         .glinda-portrait {
             font-size: 5rem;
             line-height: 1;
         }
-        .vn-dialog-box {
+        
+        /* Caixa de Diálogo Genérica (para Story e Quiz) */
+        .game-dialog-box {
             background-color: rgba(0, 0, 0, 0.85);
             color: white;
-            /* Usa o novo glinda-pink mais vivo */
             border-top: 5px solid #FF99CC; 
             min-height: 150px;
             padding: 1.5rem;
             border-radius: 0.5rem;
         }
-        .emerald-bg {
-            /* Fundo da Cidade Esmeralda (VN) */
-            /* Imagem de fallback caso a URL quebre */
-            background-image: url('https://placehold.co/1920x1080/00A86B/FFFFFF?text=Cidade+Esmeralda');
-            background-image: url('https://i.imgur.com/xnrTEQh.jpeg'); 
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            /* Usa o novo wicked-green */
-            background-color: #00A86B; 
+        
+        /* Quiz Card Styling for VN feel */
+        .quiz-card-vn {
+            background-color: rgba(0, 0, 0, 0.85); /* Mesma transparência do diálogo */
+            border-top: 5px solid #FF99CC; /* Mesma borda rosa */
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            color: white; /* Texto claro */
+        }
+        .quiz-card-vn .question-text {
+            color: white;
+            font-size: 2.25rem; /* text-4xl */
+            line-height: 1.2;
+        }
+        .quiz-card-vn .options-container {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        /* --- ESTILOS PARA AS ALTERNATIVAS --- */
-        .option-button {
+        /* --- ESTILOS PARA AS ALTERNATIVAS (AJUSTADAS PARA VN) --- */
+        .option-button-vn {
             transition: all 0.3s ease;
-            /* AUMENTADO: text-xl para text-2xl */
-            @apply w-full py-5 px-4 text-2xl text-left border-2 border-oz-yellow bg-white text-gray-800 rounded-xl shadow-md hover:bg-oz-yellow/30 font-medium;
+            @apply w-full py-4 px-4 text-xl md:text-2xl text-left border-2 border-oz-yellow bg-gray-800/70 text-white rounded-xl shadow-md hover:bg-oz-yellow/30 font-medium;
         }
-        /* Usa hot-pink para destacar o clique correto */
-        .option-button.correct {
+        .option-button-vn.correct {
             @apply bg-hot-pink border-pink-700 text-white shadow-xl scale-105;
         }
-        .option-button.incorrect {
-            @apply bg-red-400 border-red-600 text-white shadow-lg opacity-50;
+        .option-button-vn.incorrect {
+            @apply bg-red-600/70 border-red-800 text-white shadow-lg opacity-50;
+        }
+        .option-button-vn.correct-unselected { /* Para a resposta correta não clicada */
+             @apply bg-glinda-pink/50 border-glinda-pink text-white;
         }
         
-        /* --- ESTILOS DO CARD FLIP (CORREÇÃO DE ROTAÇÃO) --- */
+        /* --- ESTILOS DO CARD FLIP (ADAPTADO PARA VN) --- */
+        /* Mantemos o flip, mas o conteúdo dentro dele é que muda para o estilo VN */
         .perspective-1000 {
             perspective: 1000px; 
             height: 100%;
@@ -143,7 +162,7 @@
         }
 
         .flip-card {
-            width: 100%; /* Corrigido de 1-0% */
+            width: 100%; 
             height: 100%;
             position: relative;
             transition: transform 1s; 
@@ -161,12 +180,12 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden; 
-            /* MUDANÇA para fundo branco puro e borda amarela forte (mais vibrante) */
-            @apply bg-white p-8 rounded-3xl shadow-2xl border-8 border-oz-yellow; 
+            /* REMOVIDO: BG branco e borda amarela forte - agora é estilo VN */
+            @apply p-0 rounded-xl shadow-none border-none; 
+            background-color: transparent; /* A face não terá fundo próprio */
         }
 
         .flip-card-front {
-            /* REMOVIDO: transform: rotate(1deg); */
             transform: rotateY(0deg); 
         }
 
@@ -176,45 +195,72 @@
             align-items: center;
             justify-content: center;
             /* Fundo quase branco para o verso */
-            @apply bg-white/95 shadow-inner; 
+            @apply bg-white/95 shadow-inner rounded-xl; 
+            padding: 1.5rem; /* Ajustado padding */
         }
         /* FIM DOS ESTILOS DO CARD FLIP */
+
+        /* ===== CORREÇÃO DO PLACAR ===== */
+        .quiz-scoreboard {
+            background-color: rgba(0, 0, 0, 0.85); /* Fundo escuro */
+            border: 2px solid #00A86B; /* Borda verde */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            flex-shrink: 0; /* Impede que ele encolha */
+        }
+
+        .quiz-scoreboard h3 {
+            color: #FF99CC; /* Título rosa */
+        }
+
+        .quiz-scoreboard li span {
+            color: #FFFFFF; /* Texto BRANCO para contraste */
+        }
+        .quiz-scoreboard li .font-extrabold {
+            color: #FF69B4; /* Pontuação do vencedor rosa forte */
+        }
+        .quiz-scoreboard li .text-wicked-green {
+            color: #00A86B; /* Pontuação verde */
+        }
+        /* ===== FIM DA CORREÇÃO DO PLACAR ===== */
+
+
     </style>
 </head>
 <body class="bg-blue-50">
 
-    <!-- Título Principal -->
-    <h1 id="main-title" class="text-4xl md:text-5xl font-extrabold text-center text-wicked-green mt-6 mb-6 border-b-4 border-glinda-pink pb-2 w-full max-w-4xl">
+    
+<h1 id="main-title" class="text-4xl md:text-5xl font-extrabold text-center text-wicked-green mt-6 mb-6 border-b-4 border-glinda-pink pb-2 w-full max-w-4xl">
         Quiz de Oz: A Jornada Começa
     </h1>
 
-    <!-- 
-      Elemento de Áudio Persistente 
-      Fica aqui (escondido) para a música não reiniciar 
-      quando o botão for recarregado.
-    -->
-    <audio id="game-audio" loop>
-        <!-- ATENÇÃO: Este link de áudio é de um conversor online e pode expirar! -->
-        <source src="https://s31.aconvert.com/convert/p3r68-cdx67/1w9kc-y8izo.mp3" type="audio/mpeg">
-        Seu navegador não suporta o elemento de áudio.
-    </audio>
+    
+<audio id="game-audio" loop preload="auto">
+    <source src="https://s31.aconvert.com/convert/p3r68-cdx67/1w9kc-y8izo.mp3" type="audio/mpeg">
+    Seu navegador não suporta o elemento de áudio.
+</audio>
 
-    <!-- Conteúdo Dinâmico do Jogo -->
-    <div id="game-content">
-        <!-- O conteúdo será renderizado aqui pelo JavaScript -->
-    </div>
+    
+<div id="emerald-background" class="hidden emerald-bg-game"></div>
 
-    <!-- Caixa de Mensagem (Alerta Customizado) -->
-    <div id="message-box" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center">
+    
+<div id="game-content">
+        
+</div>
+
+    
+<div id="message-box" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center">
         <div id="message-text" class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center text-xl font-semibold border-4 border-oz-yellow">
-            <!-- O texto e o botão da mensagem são injetados via JS -->
-            <button onclick="hideMessage()" class="btn-primary mt-4">Entendi</button>
+            
+<button onclick="hideMessage()" class="btn-primary mt-4">Entendi</button>
         </div>
     </div>
 
 
 <script>
     // --- VARIÁVEIS GLOBAIS DE ESTADO ---
+    
     const GAME_STATE = {
         teams: [],
         scores: {},
@@ -225,9 +271,9 @@
         questionsUsedIds: new Set(), // Usaremos IDs para rastrear perguntas
         
         quizQuestions: [
-            { id: 1, q: "Qual o nome da bruxa boa", options: [
+            { id: 1, q: "Qual o nome da universidade mágica onde Elphaba e Glinda se encontram pela primeira vez?", options: [
                 { text: "Academia de Munchkinland", isCorrect: false },
-                { text: "Glinda", isCorrect: true },
+                { text: "Universidade Shiz", isCorrect: true },
                 { text: "Instituto de Quadlings", isCorrect: false },
                 { text: "Colégio do Leste", isCorrect: false }
             ]},
@@ -304,7 +350,6 @@
                 { text: "Dr. Dillamond", isCorrect: false }
             ]}
         ],
-        // --- TEXTO DA HISTÓRIA ATUALIZADO ---
         storyText: [
             "Saudações viajantes, me chamo glinda \"A boa\" e estou aqui para te guiar",
             "Se quer entrar na grande Cidade Esmeralda, siga o caminho de tijolos amarelos",
@@ -313,11 +358,11 @@
             "Ao visitar as nossas atrações tome cuidado com a Bruxa Má e seu grimorio magico, seu principal alvo são visitantes perdidos",
             "E para ie embora volte até o caminho de tijolos amarelos e bata seus calcanhares 3 vezes, boa viagem!"
         ]
-        // --- FIM DA ATUALIZAÇÃO ---
     };
 
     let CURRENT_QUESTION_DATA = null; 
     let storyKeyListener = null; 
+    const emeraldBackgroundElement = document.getElementById('emerald-background');
 
     // --- UTILS ---
 
@@ -358,34 +403,55 @@
     function updateScreenLayout() {
         const titleElement = document.getElementById('main-title');
 
-        if (GAME_STATE.phase === 'story') {
+        if (GAME_STATE.phase === 'story' || GAME_STATE.phase === 'quiz') {
             titleElement.classList.add('hidden');
+            emeraldBackgroundElement.classList.remove('hidden'); // Mostra o fundo esmeralda
         } else {
             titleElement.classList.remove('hidden');
+            emeraldBackgroundElement.classList.add('hidden'); // Esconde o fundo esmeralda
         }
     }
 
-    // --- LÓGICA DO PLAYER DE ÁUDIO (NOVO) ---
+    // --- LÓGICA DO PLAYER DE ÁUDIO ---
     /** Alterna (play/pause) o áudio do jogo */
+    // window.onload = renderSetupPhase; // Removido daqui, será chamado no final do script
     function toggleAudio() {
         const audio = document.getElementById('game-audio');
-        const btn = document.getElementById('play-pause-btn'); // O botão que está na tela da história
-        
+        const btn = document.getElementById('play-pause-btn');
+
         if (!audio || !btn) return;
 
+        // Garante que o volume esteja no nível certo
+        audio.volume = 0.4; // volume mais equilibrado
+
+        // Se o áudio não foi tocado ainda, tenta desbloquear o contexto de áudio
         if (audio.paused) {
-            audio.play().catch(e => {
-                console.error("Erro ao tocar áudio:", e);
-                // Tratamento de erro de Autoplay:
-                // O navegador exige interação do usuário antes de tocar áudio.
-                showMessage("O navegador bloqueou o áudio. Por favor, clique em 'Entendi' e tente tocar a música novamente.");
+            audio.play().then(() => {
+                btn.innerHTML = '⏸️ Pausar Música';
+            }).catch(() => {
+                // Caso o navegador bloqueie, exibe um aviso
+                showMessage("Clique no botão '▶️ Tocar Música' para iniciar o som — o navegador bloqueia o áudio automático.");
             });
-            btn.innerHTML = '⏸️ Pausar Música';
         } else {
             audio.pause();
             btn.innerHTML = '▶️ Tocar Música';
         }
     }
+    
+    // Tenta "desbloquear" o áudio na primeira interação do usuário
+    document.addEventListener('click', () => {
+        const audio = document.getElementById('game-audio');
+        if (audio && audio.paused) {
+             // Toca e pausa mudo para 'acordar' o áudio
+            audio.muted = true;
+            audio.play().then(() => {
+                audio.pause();
+                audio.muted = false;
+            }).catch(() => {
+                audio.muted = false;
+            });
+        }
+    }, { once: true });
 
 
     // --- FUNÇÕES DE EVENTO DE TECLADO ---
@@ -422,26 +488,28 @@
     function renderSetupPhase() {
         removeStoryKeyListener(); 
         
-        // --- NOVO: Para a música ao reiniciar ---
         const audio = document.getElementById('game-audio');
         if (audio && !audio.paused) {
             audio.pause();
         }
-        // --- FIM DA ADIÇÃO ---
         
         GAME_STATE.phase = 'setup';
         updateScreenLayout();
         const content = document.getElementById('game-content');
         
-        // Remove todas as classes de animação e layout de VN
-        content.classList.remove('emerald-bg', 'fixed', 'inset-0', 'p-0', 'm-0', 'h-screen', 'w-screen', 'top-0', 'left-0', 'story-enter', 'animate-fade-in', 'animate-fade-out');
+        content.classList.remove('fixed', 'inset-0', 'p-0', 'm-0', 'h-screen', 'w-screen', 'top-0', 'left-0', 'story-enter', 'animate-fade-in', 'animate-fade-out');
+        content.classList.add('relative', 'flex-col', 'justify-center', 'items-center'); // Garante que o setup fique centralizado
 
         document.body.style.overflow = 'auto'; 
-        content.style.minHeight = 'auto';
+        content.style.minHeight = 'auto'; // Reset min-height para setup
+        
+        // Esconde o background do jogo para a tela de setup
+        emeraldBackgroundElement.classList.add('hidden');
+
 
         content.innerHTML = `
-            <!-- CONTAINER PRINCIPAL: AGORA OCUPA W-FULL ATÉ O MAX-W-7XL E AUMENTA O PADDING -->
-            <div class="w-full max-w-7xl mx-auto bg-glinda-pink/10 p-8 md:p-16 rounded-3xl shadow-2xl border-4 border-wicked-green transform transition duration-300">
+            
+<div class="w-full max-w-7xl mx-auto bg-glinda-pink/10 p-8 md:p-16 rounded-3xl shadow-2xl border-4 border-wicked-green transform transition duration-300 animate-fade-in">
                 
                 <h2 class="text-4xl lg:text-5xl font-extrabold mb-4 text-center text-wicked-green flex items-center justify-center">
                     <span class="text-5xl lg:text-6xl mr-3 text-oz-yellow">👑</span>
@@ -453,8 +521,8 @@
                     Reúnam seus 6 grupos! Quem levará a glória da Cidade Esmeralda? Insira os nomes de suas equipes abaixo.
                 </p>
                 
-                <!-- CONTAINER DO FORMULÁRIO: EXPANDIDO PARA MAX-W-6XL COM MAIS ESPAÇAMENTO (gap-8) -->
-                <form id="team-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                
+<form id="team-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     ${Array(6).fill().map((_, i) => `
                         <div class="relative">
                             <label for="team-${i}" class="text-xl font-bold text-glinda-pink block mb-2">
@@ -462,17 +530,17 @@
                             </label>
                             <input type="text" id="team-${i}" 
                                 class="team-input mt-1 block w-full p-4 md:p-5 border-2 border-wicked-green rounded-xl shadow-lg 
-                                       focus:ring-4 focus:ring-glinda-pink focus:border-glinda-pink transition duration-150 text-xl
-                                       placeholder-gray-400" 
+                                            focus:ring-4 focus:ring-glinda-pink focus:border-glinda-pink transition duration-150 text-xl
+                                            placeholder-gray-400" 
                                 placeholder="Nome do seu time" required maxlength="25">
                         </div>
                     `).join('')}
-                    <!-- BOTÃO OCUPA AS 3 COLUNAS -->
-                    <div class="md:col-span-2 lg:col-span-3 text-center mt-10">
+                    
+<div class="md:col-span-2 lg:col-span-3 text-center mt-10">
                         <button type="submit" 
                             class="w-full md:w-3/4 lg:w-2/3 font-extrabold py-5 px-8 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 
-                                   bg-gradient-to-r from-glinda-pink to-hot-pink text-white border-4 border-oz-yellow hover:from-hot-pink hover:to-glinda-pink group 
-                                   focus:outline-none focus:ring-4 focus:ring-wicked-green/50">
+                                        bg-gradient-to-r from-glinda-pink to-hot-pink text-white border-4 border-oz-yellow hover:from-hot-pink hover:to-glinda-pink group 
+                                        focus:outline-none focus:ring-4 focus:ring-wicked-green/50">
                             <span class="flex items-center justify-center text-2xl lg:text-3xl">
                                 Começar a História de Glinda
                                 <span class="ml-3 text-3xl group-hover:rotate-12 transition-transform duration-300">✨</span>
@@ -541,38 +609,45 @@
         const currentText = GAME_STATE.storyText[storyIndex];
         const isLast = storyIndex === GAME_STATE.storyText.length - 1;
 
-        // Adiciona classes para o Visual Novel (fundo, altura total, e animação de entrada)
-        content.classList.add('emerald-bg', 'fixed', 'inset-0', 'p-0', 'm-0', 'story-enter');
-        content.style.minHeight = '100vh';
+        // Limpa classes de setup e adiciona as de VN
+        content.classList.remove('relative', 'flex-col', 'justify-center', 'items-center');
+        content.classList.add('fixed', 'inset-0', 'p-0', 'm-0', 'story-enter', 'animate-fade-in');
+        content.style.minHeight = '100vh'; // Garante que o game-content ocupe a tela inteira para o VN
         document.body.style.overflow = 'hidden';
+
+        // Mostra o fundo esmeralda para a história
+        emeraldBackgroundElement.classList.remove('hidden');
 
         // Verifica o estado atual do áudio para exibir o texto correto no botão
         const audio = document.getElementById('game-audio');
-        const audioButtonText = (audio && !audio.paused) ? '⏸️ Pausar Música' : '▶️ Tocar Música';
+        const audioButtonText = (audio && !audio.paused) ? '▶️ Tocar Música' : '⏸️ Pausar Música';
 
         content.innerHTML = `
-            <div class="w-full h-full flex flex-col justify-end p-4 md:p-8 relative"> <!-- Adicionado 'relative' -->
-                
-                <!-- BOTÃO DE ÁUDIO (NOVO) -->
-                <div class="absolute top-4 right-4 z-30">
+            <div class="w-full h-full flex flex-col justify-end p-4 md:p-8 relative"> 
+
+<div class="absolute top-4 right-4 z-30">
                     <button id="play-pause-btn" onclick="toggleAudio()" class="btn-primary py-2 px-5 text-lg opacity-80 hover:opacity-100">
-                        ${audioButtonText} <!-- Texto dinâmico -->
-                    </button>
+                        ${audioButtonText} 
+</button>
                 </div>
 
-                <!-- Retrato de Glinda (Emoji) -->
-                <div class="flex justify-start ml-2 mb-[-20px] z-10">
+                
+<div class="flex justify-start ml-2 mb-[-20px] z-10">
                     <div class="glinda-portrait text-glinda-pink flex-shrink-0 text-shadow-lg">
                         ✨
                     </div>
                 </div>
 
-                <!-- Caixa de Diálogo -->
-                <div class="vn-dialog-box w-full max-w-full z-20">
-                    <h3 class="text-xl font-bold text-glinda-pink mb-2">Glinda:</h3> <!-- Texto "A Boa" removido para caber o novo texto -->
-                    <p class="text-lg leading-relaxed italic mb-4">
+                
+<div class="game-dialog-box w-full max-w-full z-20">
+                    <h3 class="text-xl font-bold text-glinda-pink mb-2">Glinda:</h3> 
+                    
+                    <!-- ===== CORREÇÃO DA FALA AQUI ===== -->
+                    <!-- Adicionada classe text-white para garantir legibilidade -->
+                    <p class="text-lg leading-relaxed italic mb-4 text-white">
                         "${currentText}"
                     </p>
+                    <!-- ================================== -->
 
                     <div class="text-right">
                         <button onclick="${isLast ? 'startQuiz()' : 'nextStory()'} " class="btn-theme bg-glinda-pink text-white hover:bg-pink-500 py-2 px-4 text-sm">
@@ -584,6 +659,9 @@
                 </div>
             </div>
         `;
+        
+        // Remove a classe de fade-in após a animação
+        setTimeout(() => { content.classList.remove('animate-fade-in'); }, 500);
     }
 
     /** Avança para o próximo slide da história */
@@ -591,46 +669,43 @@
         if (GAME_STATE.currentStoryIndex < GAME_STATE.storyText.length - 1) {
             GAME_STATE.currentStoryIndex++;
             renderStoryPhase();
+        } else {
+            // Se for o último, inicia o quiz
+            startQuiz();
         }
     }
 
     /** Inicia a fase do Quiz após a história */
     function startQuiz() {
-        // Remove o listener do Enter ao sair da fase da história
         removeStoryKeyListener(); 
         
-        // --- NOVO: Para a música ao sair da história ---
-        const audio = document.getElementById('game-audio');
-        if (audio && !audio.paused) {
-            audio.pause();
-        }
-        // --- FIM DA ADIÇÃO ---
+        // Pausa a música ao sair da história (opcional)
+        // const audio = document.getElementById('game-audio');
+        // if (audio && !audio.paused) {
+        //     audio.pause();
+        // }
         
-        // --- TRANSIÇÃO 2: STORY -> QUIZ ---
         const content = document.getElementById('game-content');
         
-        // 1. Aplica a animação de fade-out no conteúdo VN
         content.classList.add('animate-fade-out');
         
-        // 2. Espera a animação terminar (500ms) antes de renderizar a fase do Quiz
         setTimeout(() => {
             GAME_STATE.phase = 'quiz';
             GAME_STATE.teamOrderIndex = 0; 
             GAME_STATE.currentQuestionIndex = 0;
             GAME_STATE.questionsUsedIds.clear();
             
-            // 3. Remove classes do VN (fundo, fixo, fade-out) e restaura o fluxo normal
-            content.classList.remove('emerald-bg', 'fixed', 'inset-0', 'p-0', 'm-0', 'story-enter', 'animate-fade-out');
-            document.body.style.overflow = 'auto';
-            content.style.minHeight = 'auto';
+            // Remove classes da fase anterior e adiciona as de quiz/VN
+            content.classList.remove('animate-fade-out', 'story-enter');
+            content.classList.add('fixed', 'inset-0', 'p-0', 'm-0', 'flex-col', 'justify-center', 'items-center', 'animate-fade-in'); // Adiciona para o quiz
+            document.body.style.overflow = 'hidden'; // Mantém o overflow hidden para a tela cheia
+            content.style.minHeight = '100vh';
             
-            // 4. Adiciona um fade-in para introduzir o conteúdo do quiz
-            content.classList.add('animate-fade-in'); 
+            // Garante que o fundo esmeralda esteja visível
+            emeraldBackgroundElement.classList.remove('hidden'); 
             
-            // 5. Renderiza a próxima fase
             renderQuizPhase();
             
-            // 6. Remove o fade-in após o uso
             setTimeout(() => { content.classList.remove('animate-fade-in'); }, 500);
             
         }, 500); 
@@ -641,12 +716,12 @@
         const sortedTeams = Object.entries(GAME_STATE.scores).sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
 
         return `
-            <div class="w-full md:w-64 md:sticky md:top-0 bg-white p-4 rounded-xl shadow-2xl border-2 border-wicked-green flex-shrink-0">
-                <h3 class="text-xl font-bold text-center mb-3 text-glinda-pink border-b pb-2">Placar Atual</h3>
+            <div class="w-full md:w-80 md:sticky md:top-8 quiz-scoreboard">
+                <h3 class="text-xl font-bold text-center mb-3 border-b border-glinda-pink pb-2">Placar Atual</h3>
                 <ul class="space-y-2">
                     ${sortedTeams.map(([team, score]) => `
                         <li class="flex justify-between items-center text-lg">
-                            <span class="font-medium ${score === sortedTeams[0][1] && score > 0 ? 'text-glinda-pink font-extrabold' : 'text-gray-700'}">${team}</span>
+                            <span class="font-medium ${score === sortedTeams[0][1] && score > 0 ? 'font-extrabold text-glinda-pink' : ''}">${team}</span>
                             <span class="text-2xl font-mono text-wicked-green">${score}</span>
                         </li>
                     `).join('')}
@@ -663,15 +738,14 @@
         }
 
         if (GAME_STATE.questionsUsedIds.size < GAME_STATE.quizQuestions.length) {
-            // Renderiza a próxima pergunta com um pequeno delay para a animação do flip reverso
             setTimeout(() => {
                 const content = document.getElementById('game-content');
                 content.classList.add('animate-fade-in'); 
                 renderQuizPhase();
                 setTimeout(() => { content.classList.remove('animate-fade-in'); }, 500);
-            }, 500); 
+            }, 500); // Espera o card desvirar
         } else {
-            // Se acabaram as perguntas, vai para os resultados
+            // Acabaram as perguntas, vai para os resultados
             setTimeout(() => {
                 renderResultsPhase();
             }, 500);
@@ -710,71 +784,65 @@
         
         CURRENT_QUESTION_DATA = questionData; 
         const question = questionData.q;
-        const options = [...questionData.options]; // Clona o array para embaralhar
+        const options = [...questionData.options]; 
         const content = document.getElementById('game-content');
         const currentRound = GAME_STATE.questionsUsedIds.size + 1; 
 
-        // Embaralha as opções desta pergunta
         shuffleArray(options);
 
+        // Layout do Quiz: Placar à direita (desktop) ou em cima (mobile)
         content.innerHTML = `
-            <div class="max-w-7xl mx-auto p-4 w-full"> 
-                <div class="flex flex-col md:flex-row gap-10"> 
-                    
-                    <!-- Placar -->
-                    ${renderScoreboard()}
+            <div class="max-w-7xl mx-auto p-4 w-full h-full flex flex-col-reverse md:flex-row gap-8 justify-center items-start overflow-y-auto"> 
+                
+                <!-- Coluna Principal (Quiz) -->
+                <div class="flex-grow w-full max-w-3xl perspective-1000"> 
+                    <div id="quiz-card" class="flip-card">
 
-                    <!-- Cartão do Quiz (Flip Card) -->
-                    <div class="flex-grow w-full perspective-1000"> 
-                        <div id="quiz-card" class="flip-card">
-
-                            <!-- Frente do Cartão (Pergunta) -->
-                            <div id="card-front" class="flip-card-face flip-card-front">
+                        <!-- Frente do Card (Pergunta) -->
+                        <div id="card-front" class="flip-card-face flip-card-front">
+                            
+                            <div class="quiz-card-vn w-full mx-auto p-6 md:p-8 relative">
                                 
-                                <div class="card-header bg-gradient-to-r from-wicked-green to-green-700 text-center text-white py-4 rounded-t-3xl mb-6 -mt-8 mx-[-2rem] border-b-8 border-hot-pink shadow-2xl flex items-center justify-center">
-                                    <span class="text-3xl mr-3">✨</span>
-                                    <h2 class="text-3xl font-extrabold tracking-wider">Desafio de Oz</h2>
-                                    <span class="text-3xl ml-3">✨</span>
-                                </div>
-
-                                <h3 class="text-xl font-bold mb-4 text-glinda-pink">Rodada ${currentRound} de ${GAME_STATE.quizQuestions.length}</h3>
-                                
-                                
-                                <div class="text-center p-4 bg-oz-yellow rounded-xl mb-6 border-4 border-wicked-green shadow-xl">
-                                    <p class="text-xl font-semibold text-gray-900">
-                                        Momento do Time: 
-                                        <span class="font-extrabold text-gray-900 text-3xl">${teamName}</span>
+                                <!-- Cabeçalho do Time/Rodada -->
+                                <div class="text-center p-3 bg-oz-yellow/90 rounded-xl mb-6 border-4 border-wicked-green shadow-xl">
+                                    <p class="text-lg font-semibold text-gray-900">
+                                        Rodada <span class="font-extrabold text-2xl">${currentRound}</span> / ${GAME_STATE.quizQuestions.length} | Time: 
+                                        <span class="font-extrabold text-gray-900 text-2xl">${teamName}</span>
                                     </p>
                                 </div>
 
-                                
-                                <p class="text-3xl font-semibold text-gray-900 leading-relaxed mb-8">
+                                <!-- Texto da Pergunta -->
+                                <p class="question-text font-semibold mb-6">
                                     <span class="font-black text-wicked-green mr-2 text-4xl">Q:</span> ${question}
                                 </p>
 
-                                <div id="options-area" class="space-y-4">
+                                <!-- Opções -->
+                                <div id="options-area" class="options-container">
                                     ${options.map((opt, index) => `
                                         <button 
-                                            class="option-button" 
+                                            class="option-button-vn" 
                                             onclick="handleOptionClick(${opt.isCorrect}, this, '${opt.text}')">
                                             <span class="font-extrabold text-glinda-pink mr-2 text-2xl">${String.fromCharCode(65 + index)}:</span> ${opt.text}
                                         </button>
                                     `).join('')}
                                 </div>
 
-                                
-                                <p class="text-center text-sm text-gray-500 mt-6 italic">
-                                    (Mediador: Clique na alternativa escolhida pelo time para registrar a pontuação.)
+                                <p class="text-center text-sm text-gray-400 mt-6 italic">
+                                    (Mediador: Clique na alternativa escolhida pelo time.)
                                 </p>
                             </div>
+                        </div>
 
-                            <!-- Verso do Cartão (Resultado) -->
-                            <div id="card-back" class="flip-card-face flip-card-back">
-                                <!-- O conteúdo do verso é injetado pelo handleOptionClick -->
-                            </div>
+                        <!-- Verso do Card (Feedback) -->
+                        <div id="card-back" class="flip-card-face flip-card-back">
+                            <!-- Conteúdo do feedback será injetado aqui -->
                         </div>
                     </div>
                 </div>
+
+                <!-- Barra Lateral (Placar) -->
+                ${renderScoreboard()}
+
             </div>
         `;
     }
@@ -806,9 +874,10 @@
 
         // Destaca visualmente as respostas
         allButtons.forEach(btn => {
-            // Pega o texto da opção, ignorando a letra (ex: "A: ")
             const buttonText = btn.innerText.substring(btn.innerText.indexOf(':') + 2); 
             
+            btn.classList.remove('bg-gray-800/70', 'border-oz-yellow', 'hover:bg-oz-yellow/30'); // Remove estilos base
+
             if (btn === clickedButton) {
                 if (isCorrect) {
                     btn.classList.add('correct');
@@ -817,12 +886,19 @@
                 }
             } else if (buttonText === correctAnswerText) {
                 // Destaca a correta se não foi a clicada
-                btn.classList.add('bg-hot-pink/30', 'border-hot-pink');
+                btn.classList.add('option-button-vn', 'correct-unselected');
             } else {
                 // Apaga as outras incorretas
-                btn.classList.add('opacity-40');
+                btn.classList.add('option-button-vn', 'bg-gray-600/50', 'border-gray-700', 'opacity-50');
             }
         });
+        
+        // Atualiza o placar
+        const scoreboardContainer = document.querySelector('.quiz-scoreboard');
+        if (scoreboardContainer) {
+            scoreboardContainer.outerHTML = renderScoreboard();
+        }
+
 
         // Define o conteúdo do verso do cartão
         const backContent = `
@@ -847,11 +923,10 @@
             </div>
         `;
         
-        // Insere o conteúdo no verso e vira o cartão
         document.getElementById('card-back').innerHTML = backContent;
         setTimeout(() => {
             document.getElementById('quiz-card').classList.add('is-flipped');
-        }, 300); // Pequeno delay para o usuário ver o clique
+        }, 300); // Pequeno delay para o usuário ver a cor da resposta
     }
 
     /** Renderiza a tela final de resultados */
@@ -861,10 +936,13 @@
         
         const content = document.getElementById('game-content');
         
-        // Remove layout classes do quiz
-        content.classList.remove('animate-fade-in', 'animate-fade-out');
+        content.classList.remove('animate-fade-in', 'animate-fade-out', 'fixed', 'inset-0', 'p-0', 'm-0', 'flex-col', 'justify-center', 'items-center');
+        content.classList.add('relative', 'flex-col', 'justify-center', 'items-center', 'animate-fade-in'); // Volta para o layout padrão para resultados
+
         document.body.style.overflow = 'auto';
         content.style.minHeight = 'auto';
+        
+        emeraldBackgroundElement.classList.add('hidden'); // Esconde o fundo esmeralda
 
         const sortedTeams = Object.entries(GAME_STATE.scores).sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
         const winner = sortedTeams[0];
@@ -900,6 +978,9 @@
                 </button>
             </div>
         `;
+        
+        // Remove a classe de fade-in após a animação
+        setTimeout(() => { content.classList.remove('animate-fade-in'); }, 500);
     }
 
     // --- PONTO DE ENTRADA ---
